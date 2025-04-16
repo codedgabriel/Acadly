@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Trabalhos Acadêmicos ABNT</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .logo-preview {
+            max-width: 200px;
+            max-height: 100px;
+            margin: 15px 0;
+            object-fit: contain;
+            display: none;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
+        .section {
+            background: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        .development-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background: white;
+        }
+        .btn-add-section {
+            background-color: #2196F3;
+            margin-right: 10px;
+        }
+        .btn-remove {
+            background-color: #f44336;
+        }
+        .image-upload {
+            margin: 15px 0;
+        }
+        .image-preview {
+            max-width: 250px;
+            max-height: 150px;
+            margin-top: 10px;
+            object-fit: contain;
+            display: none;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .content-options {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-add-content {
+            background-color: #9c27b0;
+        }
+        .list-type {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .list-items {
+            margin-top: 10px;
+        }
+        .list-item {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .list-item input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .btn-remove-item {
+            background-color: #ff9800;
+            padding: 5px 10px;
+        }
+        .content-text {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerador de Trabalhos Acadêmicos - Normas ABNT</h1>
+    
+    <form id="workForm">
+        <div class="section">
+            <h2>Informações Básicas</h2>
+            <div class="form-group">
+                <label for="institutionLogo">Logo da Instituição (opcional):</label>
+                <input type="file" id="institutionLogo" accept="image/*">
+                <img id="logoPreview" class="logo-preview">
+            </div>
+            
+            <div class="form-group">
+                <label for="institution">Nome da Instituição:</label>
+                <input type="text" id="institution" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="faculty">Faculdade/Departamento:</label>
+                <input type="text" id="faculty" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="course">Curso:</label>
+                <input type="text" id="course" required>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Dados do Trabalho</h2>
+            <div class="form-group">
+                <label for="title">Título do trabalho:</label>
+                <input type="text" id="title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subtitle">Subtítulo (se houver):</label>
+                <input type="text" id="subtitle">
+            </div>
+            
+            <div class="form-group">
+                <label for="author">Autor(es):</label>
+                <input type="text" id="author" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="professor">Professor/Orientador:</label>
+                <input type="text" id="professor" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="discipline">Disciplina:</label>
+                <input type="text" id="discipline" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="city">Cidade:</label>
+                <input type="text" id="city" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="year">Ano:</label>
+                <input type="number" id="year" required min="1900" max="2100" value="2023">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Conteúdo do Trabalho</h2>
+            <div class="form-group">
+                <label for="introduction">Introdução:</label>
+                <textarea id="introduction" rows="6" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Desenvolvimento:</label>
+                <div id="developmentSections">
+                    <div class="development-section" data-section="1">
+                        <div class="section-title">Seção 2.1</div>
+                        <input type="text" class="section-title-input" placeholder="Título da seção (ex: Metodologia)" required>
+                        
+                        <div class="content-options">
+                            <button type="button" class="btn-add-content" onclick="addTextArea(this)">+ Texto</button>
+                            <button type="button" class="btn-add-content" onclick="addListOptions(this)">+ Lista</button>
+                            <button type="button" class="btn-add-content" onclick="addImageInput(this)">+ Imagem</button>
+                        </div>
+                        
+                        <div class="section-content">
+                            <textarea class="content-text" rows="5" placeholder="Conteúdo textual"></textarea>
+                        </div>
+                        
+                        <button type="button" class="btn-remove" onclick="removeDevelopmentSection(this)">Remover Seção</button>
+                    </div>
+                </div>
+                <button type="button" class="btn-add-section" onclick="addDevelopmentSection()">Adicionar Seção</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="conclusion">Conclusão:</label>
+                <textarea id="conclusion" rows="6" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="references">Referências Bibliográficas (uma por linha):</label>
+                <textarea id="references" rows="6" required placeholder="Exemplo: SOBRENOME, Nome. Título do livro. Edição. Local: Editora, ano."></textarea>
+            </div>
+        </div>
+        
+        <button type="button" class="btn-primary" onclick="generatePDF()">Gerar Trabalho em PDF</button>
+    </form>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        
+        // Objeto para armazenar as páginas de cada seção
+        const sectionPages = {
+            'introducao': { start: 0 },
+            'desenvolvimento': { start: 0 },
+            'conclusao': { start: 0 },
+            'referencias': { start: 0 }
+        };
+        
+        // Adiciona uma seção inicial
+        addDevelopmentSection();
+        
+        // Funções para gerenciar seções de desenvolvimento
+        function addDevelopmentSection() {
+            const container = document.getElementById('developmentSections');
+            const sectionCount = container.children.length + 1;
+            
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'development-section';
+            sectionDiv.setAttribute('data-section', sectionCount);
+            sectionDiv.innerHTML = `
+                <div class="section-title">Seção 2.${sectionCount}</div>
+                <input type="text" class="section-title-input" placeholder="Título da seção" required>
+                
+                <div class="content-options">
+                    <button type="button" class="btn-add-content" onclick="addTextArea(this)">+ Texto</button>
+                    <button type="button" class="btn-add-content" onclick="addListOptions(this)">+ Lista</button>
+                    <button type="button" class="btn-add-content" onclick="addImageInput(this)">+ Imagem</button>
+                </div>
+                
+                <div class="section-content">
+                    <textarea class="content-text" rows="5" placeholder="Conteúdo textual"></textarea>
+                </div>
+                
+                <button type="button" class="btn-remove" onclick="removeDevelopmentSection(this)">Remover Seção</button>
+            `;
+            
+            container.appendChild(sectionDiv);
+        }
+        
+        function removeDevelopmentSection(button) {
+            const container = document.getElementById('developmentSections');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+                // Renumerar as seções restantes
+                document.querySelectorAll('.development-section').forEach((section, index) => {
+                    const sectionNumber = index + 1;
+                    section.setAttribute('data-section', sectionNumber);
+                    section.querySelector('.section-title').textContent = `Seção 2.${sectionNumber}`;
+                });
+            } else {
+                alert('O trabalho deve ter pelo menos uma seção de desenvolvimento.');
+            }
+        }
+        
+        // Função para adicionar área de texto
+        function addTextArea(button) {
+            const contentDiv = button.closest('.development-section').querySelector('.section-content');
+            const textarea = document.createElement('textarea');
+            textarea.className = 'content-text';
+            textarea.rows = 5;
+            textarea.placeholder = "Novo parágrafo de texto";
+            contentDiv.appendChild(textarea);
+        }
+        
+        // Função para adicionar opções de lista
+        function addListOptions(button) {
+            const contentDiv = button.closest('.development-section').querySelector('.section-content');
+            const listDiv = document.createElement('div');
+            listDiv.className = 'list-type';
+            
+            listDiv.innerHTML = `
+                <select class="list-style">
+                    <option value="disc">• Lista não ordenada</option>
+                    <option value="decimal">1. Lista numerada</option>
+                    <option value="lower-alpha">a. Lista alfabética</option>
+                </select>
+                <button type="button" class="btn-add-content" onclick="addListItem(this)">+ Item</button>
+                
+                <div class="list-items">
+                    <div class="list-item">
+                        <input type="text" class="list-item-input" placeholder="Digite um item da lista">
+                        <button type="button" class="btn-remove-item" onclick="removeListItem(this)">×</button>
+                    </div>
+                </div>
+            `;
+            
+            contentDiv.appendChild(listDiv);
+        }
+        
+        // Função para adicionar item à lista
+        function addListItem(button) {
+            const listItemsDiv = button.closest('.list-type').querySelector('.list-items');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'list-item';
+            itemDiv.innerHTML = `
+                <input type="text" class="list-item-input" placeholder="Digite um item da lista">
+                <button type="button" class="btn-remove-item" onclick="removeListItem(this)">×</button>
+            `;
+            listItemsDiv.appendChild(itemDiv);
+        }
+        
+        // Função para remover item da lista
+        function removeListItem(button) {
+            const listItem = button.closest('.list-item');
+            if (listItem.parentElement.children.length > 1) {
+                listItem.remove();
+            } else {
+                alert('A lista deve ter pelo menos um item.');
+            }
+        }
+        
+        // Função para adicionar campo de imagem
+        function addImageInput(button) {
+            const contentDiv = button.closest('.development-section').querySelector('.section-content');
+            const imageDiv = document.createElement('div');
+            imageDiv.className = 'image-upload';
+            
+            imageDiv.innerHTML = `
+                <label>Imagem:</label>
+                <input type="file" class="section-image" accept="image/*">
+                <input type="text" class="image-caption" placeholder="Legenda da imagem">
+                <img class="image-preview">
+                <button type="button" class="btn-remove" onclick="removeImageInput(this)" style="margin-top: 5px;">Remover Imagem</button>
+            `;
+            
+            // Adiciona evento para preview da imagem
+            imageDiv.querySelector('.section-image').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    const previewImg = this.parentElement.querySelector('.image-preview');
+                    
+                    reader.onload = function(event) {
+                        previewImg.src = event.target.result;
+                        previewImg.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            contentDiv.appendChild(imageDiv);
+        }
+        
+        // Função para remover campo de imagem
+        function removeImageInput(button) {
+            button.parentElement.remove();
+        }
+        
+        // Preview da logo da instituição
+        document.getElementById('institutionLogo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.getElementById('logoPreview');
+                    img.src = event.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        async function generatePDF() {
+            // Coletar dados do formulário
+            const logoFile = document.getElementById('institutionLogo').files[0];
+            const institution = document.getElementById('institution').value;
+            const faculty = document.getElementById('faculty').value;
+            const course = document.getElementById('course').value;
+            const title = document.getElementById('title').value;
+            const subtitle = document.getElementById('subtitle').value;
+            const author = document.getElementById('author').value;
+            const professor = document.getElementById('professor').value;
+            const discipline = document.getElementById('discipline').value;
+            const city = document.getElementById('city').value;
+            const year = document.getElementById('year').value;
+            const introduction = document.getElementById('introduction').value;
+            const conclusion = document.getElementById('conclusion').value;
+            const references = document.getElementById('references').value.split('\n').filter(ref => ref.trim() !== '');
+            
+            // Coletar seções de desenvolvimento
+            const developmentSections = [];
+            document.querySelectorAll('.development-section').forEach(section => {
+                const sectionData = {
+                    number: section.getAttribute('data-section'),
+                    title: section.querySelector('.section-title-input').value,
+                    contents: []
+                };
+                
+                // Processar cada elemento de conteúdo
+                section.querySelectorAll('.section-content > *').forEach(element => {
+                    if (element.classList.contains('content-text') && element.value.trim() !== '') {
+                        sectionData.contents.push({
+                            type: 'text',
+                            value: element.value
+                        });
+                    } 
+                    else if (element.classList.contains('list-type')) {
+                        const style = element.querySelector('.list-style').value;
+                        const items = Array.from(element.querySelectorAll('.list-item-input'))
+                                          .map(input => input.value)
+                                          .filter(item => item.trim() !== '');
+                        
+                        if (items.length > 0) {
+                            sectionData.contents.push({
+                                type: 'list',
+                                style: style,
+                                items: items
+                            });
+                        }
+                    } 
+                    else if (element.classList.contains('image-upload')) {
+                        const imageFile = element.querySelector('.section-image').files[0];
+                        const caption = element.querySelector('.image-caption').value;
+                        
+                        if (imageFile) {
+                            sectionData.contents.push({
+                                type: 'image',
+                                file: imageFile,
+                                caption: caption
+                            });
+                        }
+                    }
+                });
+                
+                if (sectionData.contents.length > 0) {
+                    developmentSections.push(sectionData);
+                }
+            });
+            
+            // Criar PDF com margens ABNT (3cm esquerda, 2cm direita/superior/inferior)
+            const doc = new jsPDF({
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            // Configurações ABNT
+            const marginLeft = 30;   // 3cm esquerda
+            const marginRight = 20;  // 2cm direita
+            const marginTop = 30;    // 3cm superior
+            const marginBottom = 20; // 2cm inferior
+            const pageWidth = 210;   // Largura A4 em mm
+            const pageHeight = 297;  // Altura A4 em mm
+            const contentWidth = pageWidth - marginLeft - marginRight;
+            let yPosition = marginTop;
+            let currentPage = 1;
+            
+            // Fonte Times New Roman (simulada com Helvetica)
+            const fontNormal = 'helvetica';
+            const fontBold = 'helvetica-bold';
+            
+            // Função para adicionar texto formatado
+            function addText(text, fontSize = 12, isBold = false, align = 'left', spacing = 1.5) {
+                doc.setFontSize(fontSize);
+                doc.setFont(isBold ? fontBold : fontNormal);
+                
+                const lines = doc.splitTextToSize(text, contentWidth);
+                const lineHeight = fontSize * spacing * 0.35;
+                
+                // Verifica se cabe na página
+                if (yPosition + (lines.length * lineHeight) > pageHeight - marginBottom) {
+                    addPage();
+                }
+                
+                let xPosition = marginLeft;
+                if (align === 'center') {
+                    xPosition = pageWidth / 2;
+                } else if (align === 'right') {
+                    xPosition = pageWidth - marginRight;
+                }
+                
+                doc.text(lines, xPosition, yPosition, {
+                    maxWidth: contentWidth,
+                    align: align
+                });
+                
+                yPosition += lines.length * lineHeight;
+                return lines.length * lineHeight;
+            }
+            
+            // Função para adicionar lista (modificada para evitar sobreposição)
+            function addList(items, style, fontSize = 12, spacing = 1.5) {
+                const lineHeight = fontSize * spacing * 0.35;
+                const itemHeight = lineHeight;
+                
+                items.forEach((item, index) => {
+                    let prefix = '';
+                    if (style === 'decimal') prefix = `${index + 1}. `;
+                    if (style === 'lower-alpha') prefix = `${String.fromCharCode(97 + index)}. `;
+                    if (style === 'disc') prefix = '• ';
+                    
+                    const text = `${prefix}${item}`;
+                    
+                    // Verifica se cabe na página
+                    if (yPosition + itemHeight > pageHeight - marginBottom) {
+                        addPage();
+                    }
+                    
+                    doc.setFontSize(fontSize);
+                    doc.setFont(fontNormal);
+                    
+                    // Adiciona espaço antes do primeiro item se necessário
+                    if (index === 0) {
+                        yPosition += 5;
+                    }
+                    
+                    // Divide o texto em linhas se necessário
+                    const lines = doc.splitTextToSize(text, contentWidth);
+                    lines.forEach((line, lineIndex) => {
+                        doc.text(line, marginLeft, yPosition + (lineIndex * lineHeight), {
+                            maxWidth: contentWidth,
+                            align: 'left'
+                        });
+                    });
+                    
+                    yPosition += lines.length * lineHeight;
+                });
+                
+                // Adiciona espaço após a lista
+                yPosition += 5;
+            }
+            
+            // Função para adicionar imagem mantendo proporção
+            async function addImage(imgData, maxWidth, maxHeight, caption = '') {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = function() {
+                        // Calcular dimensões mantendo proporção
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            const ratio = maxWidth / width;
+                            width = maxWidth;
+                            height = height * ratio;
+                        }
+                        
+                        if (height > maxHeight) {
+                            const ratio = maxHeight / height;
+                            height = maxHeight;
+                            width = width * ratio;
+                        }
+                        
+                        // Verificar se cabe na página
+                        if (yPosition + height > pageHeight - marginBottom - (caption ? 15 : 0)) {
+                            addPage();
+                        }
+                        
+                        // Centralizar imagem
+                        const xPosition = (pageWidth - width) / 2;
+                        
+                        // Adicionar espaço antes da imagem
+                        yPosition += 10;
+                        
+                        // Adicionar imagem
+                        doc.addImage(imgData, 'JPEG', xPosition, yPosition, width, height);
+                        yPosition += height + 5;
+                        
+                        // Adicionar legenda se existir
+                        if (caption) {
+                            addText(`Figura ${document.querySelectorAll('.image-upload').length}: ${caption}`, 10, false, 'center', 1);
+                            yPosition += 10;
+                        }
+                        
+                        resolve();
+                    };
+                    img.src = imgData;
+                });
+            }
+            
+            // Função para adicionar nova página
+            function addPage() {
+                doc.addPage();
+                currentPage++;
+                yPosition = marginTop;
+                
+                if (currentPage > 1) {
+                    addPageNumber();
+                }
+            }
+            
+            // Função para adicionar número da página
+            function addPageNumber() {
+                doc.setFontSize(10);
+                doc.setFont(fontNormal);
+                doc.text(`${currentPage}`, pageWidth - 10, 10);
+            }
+            
+            // CAPA (página 1)
+            doc.setPage(1);
+            
+            if (logoFile) {
+                await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = async function(event) {
+                        const imgData = event.target.result;
+                        const img = new Image();
+                        img.onload = function() {
+                            // Definir tamanho máximo para logo
+                            const maxWidth = 50;
+                            const maxHeight = 30;
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            // Redimensionar mantendo proporção
+                            if (width > maxWidth) {
+                                const ratio = maxWidth / width;
+                                width = maxWidth;
+                                height = height * ratio;
+                            }
+                            
+                            if (height > maxHeight) {
+                                const ratio = maxHeight / height;
+                                height = maxHeight;
+                                width = width * ratio;
+                            }
+                            
+                            // Centralizar
+                            const centerX = (pageWidth - width) / 2;
+                            
+                            // Posicionar a logo
+                            doc.addImage(imgData, 'JPEG', centerX, marginTop, width, height);
+                            yPosition = marginTop + height + 20;
+                            
+                            // Restante da capa
+                            addText(institution.toUpperCase(), 14, true, 'center', 1.5);
+                            addText(faculty, 12, false, 'center', 1.5);
+                            addText(course, 12, false, 'center', 1.5);
+                            
+                            // Espaço de 1/3 da página
+                            yPosition = marginTop + (pageHeight / 3);
+                            
+                            // Título do trabalho (CAIXA ALTA, centralizado)
+                            addText(title.toUpperCase(), 16, true, 'center', 1.5);
+                            
+                            // Subtítulo (se existir, centralizado)
+                            if (subtitle) {
+                                addText(subtitle, 14, false, 'center', 1.5);
+                            }
+                            
+                            // Espaço de 2/3 da página
+                            yPosition = marginTop + (pageHeight * 2/3);
+                            
+                            // Autor(es) (centralizado)
+                            addText(author, 12, false, 'center', 1.5);
+                            
+                            // Local e data (centralizado, na parte inferior)
+                            yPosition = pageHeight - marginBottom - 20;
+                            addText(`${city}`, 12, false, 'center', 1.5);
+                            addText(`${year}`, 12, false, 'center', 1.5);
+                            
+                            resolve();
+                        };
+                        img.src = imgData;
+                    };
+                    reader.readAsDataURL(logoFile);
+                });
+            } else {
+                // Versão sem logo
+                addText(institution.toUpperCase(), 14, true, 'center', 1.5);
+                addText(faculty, 12, false, 'center', 1.5);
+                addText(course, 12, false, 'center', 1.5);
+                
+                // Espaço de 1/3 da página
+                yPosition = marginTop + (pageHeight / 3);
+                
+                // Título do trabalho (CAIXA ALTA, centralizado)
+                addText(title.toUpperCase(), 16, true, 'center', 1.5);
+                
+                // Subtítulo (se existir, centralizado)
+                if (subtitle) {
+                    addText(subtitle, 14, false, 'center', 1.5);
+                }
+                
+                // Espaço de 2/3 da página
+                yPosition = marginTop + (pageHeight * 2/3);
+                
+                // Autor(es) (centralizado)
+                addText(author, 12, false, 'center', 1.5);
+                
+                // Local e data (centralizado, na parte inferior)
+                yPosition = pageHeight - marginBottom - 20;
+                addText(`${city}`, 12, false, 'center', 1.5);
+                addText(`${year}`, 12, false, 'center', 1.5);
+            }
+            
+            // Folha de rosto (página 2)
+            addPage();
+            sectionPages['folha_rosto'] = currentPage;
+            
+            // Repete informações da capa com adicionais
+            addText(institution.toUpperCase(), 14, true, 'center', 1.5);
+            addText(faculty, 12, false, 'center', 1.5);
+            addText(course, 12, false, 'center', 1.5);
+            
+            yPosition += 20;
+            
+            addText(title.toUpperCase(), 16, true, 'center', 1.5);
+            if (subtitle) {
+                addText(subtitle, 14, false, 'center', 1.5);
+            }
+            
+            yPosition += 30;
+            
+            // Texto específico da folha de rosto
+            addText(`Trabalho acadêmico apresentado à disciplina ${discipline}`, 12, false, 'center', 1.5);
+            addText(`como requisito para avaliação parcial.`, 12, false, 'center', 1.5);
+            
+            yPosition += 20;
+            
+            addText(`Professor: ${professor}`, 12, false, 'center', 1.5);
+            addText(author, 12, false, 'center', 1.5);
+            
+            yPosition += 20;
+            
+            addText(`${city}`, 12, false, 'center', 1.5);
+            addText(`${year}`, 12, false, 'center', 1.5);
+            
+            // Introdução (página 3)
+            addPage();
+            sectionPages['introducao'].start = currentPage;
+            addText('1 INTRODUÇÃO', 14, true, 'left', 1.5);
+            addText(introduction, 12, false, 'justify', 1.5);
+            
+            // Desenvolvimento (página seguinte)
+            addPage();
+            sectionPages['desenvolvimento'].start = currentPage;
+            addText('2 DESENVOLVIMENTO', 14, true, 'left', 1.5);
+            
+            // Processar cada seção de desenvolvimento
+            for (const section of developmentSections) {
+                addText(`2.${section.number} ${section.title}`, 12, true, 'left', 1.5);
+                
+                // Processar cada conteúdo da seção
+                for (const content of section.contents) {
+                    if (content.type === 'text') {
+                        addText(content.value, 12, false, 'justify', 1.5);
+                    } 
+                    else if (content.type === 'list') {
+                        addList(content.items, content.style);
+                    } 
+                    else if (content.type === 'image') {
+                        await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = async function(event) {
+                                await addImage(event.target.result, contentWidth, 100, content.caption);
+                                resolve();
+                            };
+                            reader.readAsDataURL(content.file);
+                        });
+                    }
+                }
+            }
+            
+            // Conclusão (página seguinte)
+            addPage();
+            sectionPages['conclusao'].start = currentPage;
+            addText('3 CONCLUSÃO', 14, true, 'left', 1.5);
+            addText(conclusion, 12, false, 'justify', 1.5);
+            
+            // Referências (nova página)
+            addPage();
+            sectionPages['referencias'].start = currentPage;
+            addText('REFERÊNCIAS', 14, true, 'left', 1.5);
+            
+            references.forEach(ref => {
+                if (ref.trim()) {
+                    addText(`• ${ref.trim()}`, 12, false, 'left', 1.0);
+                }
+            });
+            
+            // Agora que sabemos todas as páginas, vamos criar o sumário na página 3
+            // Primeiro, precisamos salvar todas as páginas que já criamos
+            const pdfPages = doc.internal.pages;
+            const pdfPageCount = pdfPages.length;
+            
+            // Criar uma nova página para o sumário (será a página 3)
+            doc.insertPage(2); // Insere uma nova página após a folha de rosto
+            
+            // Configurar a nova página como página atual
+            doc.setPage(2);
+            currentPage = 2;
+            yPosition = marginTop;
+            
+            // Adicionar título do sumário
+            addText('SUMÁRIO', 14, true, 'center', 1.5);
+            yPosition += 15;
+            
+            doc.text(`1 INTRODUÇÃO`, marginLeft, yPosition);
+            doc.text(sectionPages['introducao'].start.toString(), pageWidth - marginRight, yPosition, { align: 'right' });
+            yPosition += 8;
+            
+            doc.text(`2 DESENVOLVIMENTO`, marginLeft, yPosition);
+            doc.text(sectionPages['desenvolvimento'].start.toString(), pageWidth - marginRight, yPosition, { align: 'right' });
+            yPosition += 8;
+            
+            developmentSections.forEach(section => {
+                doc.text(`2.${section.number} ${section.title}`, marginLeft + 10, yPosition);
+                doc.text(sectionPages['desenvolvimento'].start.toString(), pageWidth - marginRight, yPosition, { align: 'right' });
+                yPosition += 8;
+            });
+            
+            doc.text(`3 CONCLUSÃO`, marginLeft, yPosition);
+            doc.text(sectionPages['conclusao'].start.toString(), pageWidth - marginRight, yPosition, { align: 'right' });
+            yPosition += 8;
+            
+            doc.text(`REFERÊNCIAS`, marginLeft, yPosition);
+            doc.text(sectionPages['referencias'].start.toString(), pageWidth - marginRight, yPosition, { align: 'right' });
+            
+            // Atualizar números de página em todas as páginas (exceto capa e folha de rosto)
+            for (let i = 2; i <= pdfPageCount + 1; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.setFont(fontNormal);
+                doc.text(`${i}`, pageWidth - 10, 10);
+            }
+            
+            // Salvar o PDF
+            doc.save(`Trabalho_${title.substring(0, 20).replace(/\s+/g, '_')}.pdf`);
+        }
+    </script>
+</body>
+</html>
