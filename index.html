@@ -263,6 +263,11 @@
                 <label for="year" class="required-field">Ano:</label>
                 <input type="number" id="year" required min="1900" max="2100" value="2023">
             </div>
+
+            <div class="form-group">
+                <label for="frontPageText">Texto da Folha de Rosto:</label>
+                <textarea id="frontPageText" rows="4" placeholder="Texto que aparecerá na folha de rosto (ex: Trabalho acadêmico apresentado como requisito para avaliação parcial)">Trabalho acadêmico apresentado à disciplina como requisito para avaliação parcial.</textarea>
+            </div>
         </div>
         
         <div class="section">
@@ -511,6 +516,7 @@
             const discipline = document.getElementById('discipline').value;
             const city = document.getElementById('city').value;
             const year = document.getElementById('year').value;
+            const frontPageText = document.getElementById('frontPageText').value;
             const introduction = document.getElementById('introduction').value;
             const conclusion = document.getElementById('conclusion').value;
             const references = document.getElementById('references').value.split('\n').filter(ref => ref.trim() !== '');
@@ -1044,9 +1050,11 @@
             
             yPosition += 30;
             
-            // Texto específico da folha de rosto
-            addText(`Trabalho acadêmico apresentado à disciplina ${discipline}`, fontSizeNormal, false, 'center', 1.5);
-            addText(`como requisito para avaliação parcial.`, fontSizeNormal, false, 'center', 1.5);
+            // Texto específico da folha de rosto (personalizável)
+            const frontPageLines = frontPageText.split('\n').filter(line => line.trim() !== '');
+            frontPageLines.forEach(line => {
+                addText(line, fontSizeNormal, false, 'right', 1.5);
+            });
             
             yPosition += 20;
             
@@ -1103,7 +1111,7 @@
                 }
             }
             
-            // Conclusão (página seguinte) saerá
+            // Conclusão (página seguinte)
             addPage();
             sectionPages['conclusao'].start = currentPage;
             addSectionTitle('3 CONCLUSÃO', 1);
