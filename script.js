@@ -4,7 +4,7 @@ const { jsPDF } = window.jspdf;
 const ABNT_CONFIG = {
     margins: {
         left: 30,    // 3cm esquerda (ABNT)
-        right: 20,   // 2cm direita
+        right: 30,   // 2cm direita
         top: 30,     // 3cm superior
         bottom: 20   // 2cm inferior
     },
@@ -76,59 +76,11 @@ const sectionPages = {
     'anexos': { start: 0 }
 };
 
-// Adiciona uma seção inicial de desenvolvimento
-addDevelopmentSection();
-
-// Funções para gerenciar seções de desenvolvimento
-function addDevelopmentSection() {
-    const container = document.getElementById('developmentSections');
-    const sectionCount = container.children.length + 1;
-    
-    const sectionDiv = document.createElement('div');
-    sectionDiv.className = 'development-section';
-    sectionDiv.setAttribute('data-section', sectionCount);
-    sectionDiv.innerHTML = `
-        <div class="section-title">Seção 2.${sectionCount}</div>
-        <input type="text" class="section-title-input" placeholder="Título da seção" required>
-        
-        <div class="content-options">
-            <button type="button" class="btn-add-content" onclick="addTextArea(this)">+ Texto</button>
-            <button type="button" class="btn-add-content" onclick="addListOptions(this)">+ Lista</button>
-            <button type="button" class="btn-add-content" onclick="addImageInput(this)">+ Imagem</button>
-            <button type="button" class="btn-add-content" onclick="addTableInput(this)">+ Tabela</button>
-            <button type="button" class="btn-add-content" onclick="addFootnoteInput(this)">+ Nota de Rodapé</button>
-        </div>
-        
-        <div class="section-content">
-            <textarea class="content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
-        </div>
-        
-        <button type="button" class="btn-remove" onclick="removeDevelopmentSection(this)">Remover Seção</button>
-    `;
-    
-    container.appendChild(sectionDiv);
-}
-
-function removeDevelopmentSection(button) {
-    const container = document.getElementById('developmentSections');
-    if (container.children.length > 1) {
-        button.parentElement.remove();
-        // Renumerar as seções restantes
-        document.querySelectorAll('.development-section').forEach((section, index) => {
-            const sectionNumber = index + 1;
-            section.setAttribute('data-section', sectionNumber);
-            section.querySelector('.section-title').textContent = `Seção 2.${sectionNumber}`;
-        });
-    } else {
-        alert('O trabalho deve ter pelo menos uma seção de desenvolvimento.');
-    }
-}
-
 // Função para adicionar área de texto
 function addTextArea(button) {
     const contentDiv = button.closest('.development-section').querySelector('.section-content');
     const textarea = document.createElement('textarea');
-    textarea.className = 'content-text';
+    textarea.className = 'content-text form-control';
     textarea.rows = 6;
     textarea.placeholder = "Novo parágrafo de texto";
     contentDiv.appendChild(textarea);
@@ -142,7 +94,7 @@ function addListOptions(button) {
     
     listDiv.innerHTML = `
         <div style="margin-bottom: 10px;">
-            <select class="list-style" style="width: auto; padding: 8px 12px;">
+            <select class="list-style form-control" style="width: auto; padding: 8px 12px;">
                 <option value="disc">• Lista não ordenada</option>
                 <option value="decimal">1. Lista numerada</option>
                 <option value="lower-alpha">a. Lista alfabética</option>
@@ -150,12 +102,14 @@ function addListOptions(button) {
                 <option value="lower-roman">i. Lista romana</option>
             </select>
         </div>
-        <button type="button" class="btn-add-content" onclick="addListItem(this)">+ Adicionar Item</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addListItem(this)">
+            <i class="fas fa-plus"></i> Adicionar Item
+        </button>
         
         <div class="list-items">
             <div class="list-item">
-                <input type="text" class="list-item-input" placeholder="Digite um item da lista">
-                <button type="button" class="btn-remove-item" onclick="removeListItem(this)">×</button>
+                <input type="text" class="list-item-input form-control" placeholder="Digite um item da lista">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeListItem(this)">×</button>
             </div>
         </div>
     `;
@@ -169,8 +123,8 @@ function addListItem(button) {
     const itemDiv = document.createElement('div');
     itemDiv.className = 'list-item';
     itemDiv.innerHTML = `
-        <input type="text" class="list-item-input" placeholder="Digite um item da lista">
-        <button type="button" class="btn-remove-item" onclick="removeListItem(this)">×</button>
+        <input type="text" class="list-item-input form-control" placeholder="Digite um item da lista">
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeListItem(this)">×</button>
     `;
     listItemsDiv.appendChild(itemDiv);
 }
@@ -193,13 +147,15 @@ function addImageInput(button) {
     
     imageDiv.innerHTML = `
         <label>Imagem:</label>
-        <input type="file" class="section-image" accept="image/*">
+        <input type="file" class="section-image form-control" accept="image/*">
         <div style="margin-top: 10px;">
-            <input type="text" class="image-caption" placeholder="Legenda da imagem (obrigatório)" style="width: 100%;">
-            <input type="text" class="image-source" placeholder="Fonte da imagem (obrigatório)" style="width: 100%; margin-top: 5px;">
+            <input type="text" class="image-caption form-control" placeholder="Legenda da imagem (obrigatório)" style="width: 100%;">
+            <input type="text" class="image-source form-control" placeholder="Fonte da imagem (obrigatório)" style="width: 100%; margin-top: 5px;">
         </div>
         <img class="image-preview">
-        <button type="button" class="btn-remove" onclick="removeImageInput(this)" style="margin-top: 10px;">Remover Imagem</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeImageInput(this)" style="margin-top: 10px;">
+            <i class="fas fa-trash"></i> Remover Imagem
+        </button>
     `;
     
     // Adiciona evento para preview da imagem
@@ -229,19 +185,25 @@ function addTableInput(button) {
     tableDiv.innerHTML = `
         <label>Tabela:</label>
         <div style="margin-top: 10px;">
-            <input type="text" class="table-title" placeholder="Título da tabela (obrigatório)" style="width: 100%;">
-            <input type="text" class="table-source" placeholder="Fonte da tabela (obrigatório)" style="width: 100%; margin-top: 5px;">
+            <input type="text" class="table-title form-control" placeholder="Título da tabela (obrigatório)" style="width: 100%;">
+            <input type="text" class="table-source form-control" placeholder="Fonte da tabela (obrigatório)" style="width: 100%; margin-top: 5px;">
         </div>
         <div class="table-editor" style="margin-top: 10px;">
-            <button type="button" class="btn-add-row" onclick="addTableRow(this)">+ Linha</button>
-            <button type="button" class="btn-add-col" onclick="addTableColumn(this)">+ Coluna</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addTableRow(this)">
+                <i class="fas fa-plus"></i> Linha
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addTableColumn(this)">
+                <i class="fas fa-plus"></i> Coluna
+            </button>
             <table class="table-preview" border="1" style="width: 100%; margin-top: 10px; border-collapse: collapse;">
                 <tr>
                     <td contenteditable="true" style="padding: 5px;">Célula 1</td>
                 </tr>
             </table>
         </div>
-        <button type="button" class="btn-remove" onclick="removeTableInput(this)" style="margin-top: 10px;">Remover Tabela</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeTableInput(this)" style="margin-top: 10px;">
+            <i class="fas fa-trash"></i> Remover Tabela
+        </button>
     `;
     
     contentDiv.appendChild(tableDiv);
@@ -281,10 +243,12 @@ function addFootnoteInput(button) {
     
     footnoteDiv.innerHTML = `
         <div style="margin-top: 10px;">
-            <input type="text" class="footnote-marker" placeholder="Marcador no texto (ex: 1)" style="width: 30px;">
-            <input type="text" class="footnote-text" placeholder="Texto da nota de rodapé" style="width: calc(100% - 40px); margin-left: 5px;">
+            <input type="text" class="footnote-marker form-control" placeholder="Marcador no texto (ex: 1)" style="width: 30px;">
+            <input type="text" class="footnote-text form-control" placeholder="Texto da nota de rodapé" style="width: calc(100% - 40px); margin-left: 5px;">
         </div>
-        <button type="button" class="btn-remove" onclick="removeFootnoteInput(this)" style="margin-top: 5px;">Remover Nota</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeFootnoteInput(this)" style="margin-top: 5px;">
+            <i class="fas fa-trash"></i> Remover Nota
+        </button>
     `;
     
     contentDiv.appendChild(footnoteDiv);
@@ -368,8 +332,9 @@ async function generatePDF() {
     // Coletar seções de desenvolvimento
     const developmentSections = [];
     document.querySelectorAll('.development-section').forEach(section => {
+        const sectionNumber = section.querySelector('.section-number').textContent;
         const sectionData = {
-            number: section.getAttribute('data-section'),
+            number: sectionNumber,
             title: section.querySelector('.section-title-input').value,
             contents: [],
             footnotes: []
@@ -1193,11 +1158,19 @@ async function generatePDF() {
     // Desenvolvimento (página seguinte)
     addPage();
     sectionPages['desenvolvimento'].start = currentPage;
-    addSectionTitle('2 DESENVOLVIMENTO', 1);
     
     // Processar cada seção de desenvolvimento
     for (const section of developmentSections) {
-        addSectionTitle(`2.${section.number} ${section.title}`, 2);
+        // Determinar o nível da seção
+        let level;
+        if (section.number.includes('.')) {
+            const dotCount = (section.number.match(/\./g) || []).length;
+            level = dotCount + 2; // 2.1 -> level 2, 2.1.1 -> level 3
+        } else {
+            level = 1; // Seção principal
+        }
+        
+        addSectionTitle(`${section.number} ${section.title}`, level);
         
         // Processar cada conteúdo da seção
         for (const content of section.contents) {
@@ -1246,7 +1219,7 @@ async function generatePDF() {
     // Conclusão (página seguinte)
     addPage();
     sectionPages['conclusao'].start = currentPage;
-    addSectionTitle('3 CONCLUSÃO', 1);
+    addSectionTitle('CONCLUSÃO', 1);
     const conclusionParagraphs = conclusion.split('\n').filter(p => p.trim() !== '');
     conclusionParagraphs.forEach(p => addParagraph(p));
     
@@ -1314,13 +1287,13 @@ async function generatePDF() {
     if (sectionPages['lista_tabelas'].start) addSummaryItem('LISTA DE TABELAS', sectionPages['lista_tabelas'].start);
     if (sectionPages['lista_abreviaturas'].start) addSummaryItem('LISTA DE ABREVIATURAS', sectionPages['lista_abreviaturas'].start);
     addSummaryItem('1 INTRODUÇÃO', sectionPages['introducao'].start);
-    addSummaryItem('2 DESENVOLVIMENTO', sectionPages['desenvolvimento'].start);
     
+    // Adicionar seções de desenvolvimento ao sumário
     developmentSections.forEach(section => {
-        addSummaryItem(`2.${section.number} ${section.title}`, sectionPages['desenvolvimento'].start);
+        addSummaryItem(`${section.number} ${section.title}`, sectionPages['desenvolvimento'].start);
     });
     
-    addSummaryItem('3 CONCLUSÃO', sectionPages['conclusao'].start);
+    addSummaryItem('CONCLUSÃO', sectionPages['conclusao'].start);
     addSummaryItem('REFERÊNCIAS', sectionPages['referencias'].start);
     if (sectionPages['apendices'].start) addSummaryItem('APÊNDICES', sectionPages['apendices'].start);
     if (sectionPages['anexos'].start) addSummaryItem('ANEXOS', sectionPages['anexos'].start);

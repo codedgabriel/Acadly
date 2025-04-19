@@ -1,809 +1,1147 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Gerador de Trabalhos Acadêmicos ABNT</title>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #4CAF50;
+            --accent-color: #3498db;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #333;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
-
-            font-family: 'Times New Roman', Times, serif;
-
-            max-width: 900px;
-
-            margin: 0 auto;
-
-            padding: 30px;
-
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-
-            color: #333;
-
-            background-color: #f8f9fa;
-
-        }
-
-        .form-group {
-
-            margin-bottom: 25px;
-
-        }
-
-        label {
-
-            display: block;
-
-            margin-bottom: 8px;
-
-            font-weight: 600;
-
-            color: #2c3e50;
-
-        }
-
-        input, textarea, select {
-
-            width: 100%;
-
-            padding: 12px;
-
-            box-sizing: border-box;
-
-            border: 1px solid #ced4da;
-
-            border-radius: 4px;
-
-            font-size: 15px;
-
-            transition: border-color 0.3s;
-
-            font-family: 'Times New Roman', Times, serif;
-
-        }
-
-        input:focus, textarea:focus, select:focus {
-
-            border-color: #4CAF50;
-
-            outline: none;
-
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-
-        }
-
-        button {
-
-            color: white;
-
-            padding: 12px 18px;
-
-            border: none;
-
-            cursor: pointer;
-
-            margin-top: 10px;
-
-            border-radius: 4px;
-
-            font-size: 14px;
-
-            font-weight: 600;
-
-            transition: all 0.3s;
-
-            font-family: 'Times New Roman', Times, serif;
-
-        }
-
-        .btn-primary {
-
-            background-color: #4CAF50;
-
-        }
-
-        .btn-primary:hover {
-
-            background-color: #3d8b40;
-
-            transform: translateY(-2px);
-
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-
-        }
-
-        .logo-preview {
-
-            max-width: 200px;
-
-            max-height: 100px;
-
-            margin: 15px 0;
-
-            object-fit: contain;
-
-            display: none;
-
-            border: 1px solid #ddd;
-
-            padding: 5px;
-
-            background: white;
-
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-
-        }
-
-        .section {
-
-            background: white;
-
-            padding: 25px;
-
-            margin-bottom: 30px;
-
-            border-radius: 8px;
-
-            border: 1px solid #e0e0e0;
-
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-
-        }
-
-        .development-section {
-
-            margin-bottom: 25px;
-
-            border: 1px solid #e0e0e0;
-
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
             padding: 20px;
-
-            border-radius: 6px;
-
-            background: #f8fafc;
-
-            position: relative;
-
         }
 
-        .btn-add-section {
-
-            background-color: #2196F3;
-
-            margin-right: 10px;
-
-        }
-
-        .btn-add-section:hover {
-
-            background-color: #0b7dda;
-
-        }
-
-        .btn-remove {
-
-            background-color: #f44336;
-
-        }
-
-        .btn-remove:hover {
-
-            background-color: #d32f2f;
-
-        }
-
-        .image-upload, .table-upload, .footnote-input {
-
-            margin: 20px 0;
-
-            padding: 15px;
-
-            background: white;
-
-            border-radius: 6px;
-
-            border: 1px dashed #ccc;
-
-        }
-
-        .image-preview {
-
-            max-width: 100%;
-
-            max-height: 200px;
-
-            margin-top: 15px;
-
-            object-fit: contain;
-
-            display: none;
-
-            border: 1px solid #ddd;
-
-            padding: 5px;
-
-            background: white;
-
-        }
-
-        .section-title {
-
-            font-weight: bold;
-
-            margin-bottom: 15px;
-
-            color: #2c3e50;
-
-            font-size: 16px;
-
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         h1 {
-
-            color: #2c3e50;
-
+            color: var(--primary-color);
             text-align: center;
-
-            margin-bottom: 40px;
-
-            font-size: 28px;
-
+            margin-bottom: 30px;
+            font-size: 2.2rem;
             font-weight: 700;
-
             padding-bottom: 15px;
+            border-bottom: 3px solid var(--secondary-color);
+            position: relative;
+        }
 
-            border-bottom: 2px solid #4CAF50;
-
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
         }
 
         h2 {
-
-            color: #34495e;
-
-            border-bottom: 1px solid #eee;
-
-            padding-bottom: 12px;
-
-            margin-top: 0;
-
-            font-size: 22px;
-
-            font-weight: 600;
-
-        }
-
-        .content-options {
-
-            margin: 15px 0;
-
-            display: flex;
-
-            gap: 12px;
-
-            flex-wrap: wrap;
-
-        }
-
-        .btn-add-content {
-
-            background-color: #9c27b0;
-
-            padding: 10px 15px;
-
-        }
-
-        .btn-add-content:hover {
-
-            background-color: #7b1fa2;
-
-        }
-
-        .list-type {
-
-            margin: 20px 0;
-
-            padding: 15px;
-
-            background: white;
-
-            border-radius: 6px;
-
-            border: 1px solid #e0e0e0;
-
-        }
-
-        .list-items {
-
-            margin-top: 15px;
-
-        }
-
-        .list-item {
-
-            margin-bottom: 12px;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-        }
-
-        .list-item input {
-
-            flex-grow: 1;
-
-            margin-right: 0;
-
-        }
-
-        .btn-remove-item {
-
-            background-color: #ff9800;
-
-            padding: 8px 12px;
-
-            flex-shrink: 0;
-
-        }
-
-        .btn-remove-item:hover {
-
-            background-color: #f57c00;
-
-        }
-
-        .content-text {
-
+            color: var(--primary-color);
+            font-size: 1.5rem;
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--medium-gray);
+            position: relative;
+        }
 
-            min-height: 120px;
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
 
+        .section {
+            background: var(--white);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary-color);
+            position: relative;
         }
 
         .required-field::after {
-
             content: " *";
+            color: var(--danger-color);
+            font-weight: bold;
+        }
 
-            color: #f44336;
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 6px;
+            transition: var(--transition);
+            font-family: 'Roboto', sans-serif;
+        }
 
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #3e8e41;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background-color: var(--accent-color);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            background-color: #d35400;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .logo-preview {
+            max-width: 200px;
+            max-height: 100px;
+            margin: 15px 0;
+            object-fit: contain;
+            display: none;
+            border: 1px solid var(--medium-gray);
+            padding: 5px;
+            background: var(--white);
+            border-radius: 4px;
+        }
+
+        .development-section {
+            margin-bottom: 25px;
+            border: 1px solid var(--medium-gray);
+            padding: 20px;
+            border-radius: 6px;
+            background: #f8fafc;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .development-section:hover {
+            border-color: var(--accent-color);
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
+        .content-options {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .section-content {
+            margin-top: 15px;
+        }
+
+        .image-upload, .table-upload, .footnote-input, .list-type {
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--white);
+            border-radius: 6px;
+            border: 1px dashed var(--medium-gray);
+            position: relative;
+        }
+
+        .image-upload::before {
+            content: "Imagem";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--white);
+            padding: 0 5px;
+            font-size: 12px;
+            color: var(--primary-color);
+        }
+
+        .table-upload::before {
+            content: "Tabela";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--white);
+            padding: 0 5px;
+            font-size: 12px;
+            color: var(--primary-color);
+        }
+
+        .footnote-input::before {
+            content: "Nota de Rodapé";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--white);
+            padding: 0 5px;
+            font-size: 12px;
+            color: var(--primary-color);
+        }
+
+        .list-type::before {
+            content: "Lista";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--white);
+            padding: 0 5px;
+            font-size: 12px;
+            color: var(--primary-color);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            object-fit: contain;
+            display: none;
+            border: 1px solid var(--medium-gray);
+            padding: 5px;
+            background: var(--white);
+            border-radius: 4px;
+        }
+
+        .list-items {
+            margin-top: 15px;
+        }
+
+        .list-item {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .list-item input {
+            flex-grow: 1;
+            margin-right: 0;
         }
 
         .table-preview {
-
             width: 100%;
-
             border-collapse: collapse;
-
             margin-top: 10px;
-
         }
 
         .table-preview td {
-
-            border: 1px solid #ddd;
-
+            border: 1px solid var(--medium-gray);
             padding: 8px;
-
             text-align: left;
-
         }
 
         .optional-section {
-
             background-color: #f5f5f5;
-
-            border-left: 4px solid #4CAF50;
-
+            border-left: 4px solid var(--secondary-color);
             padding: 15px;
-
             margin-bottom: 20px;
-
+            position: relative;
+            border-radius: 4px;
         }
 
         .optional-section h3 {
-
             margin-top: 0;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
 
-            color: #2c3e50;
+        .optional-section h3 i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
 
+        .progress-container {
+            width: 100%;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            color: var(--accent-color);
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .section-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--accent-color);
+            color: var(--white);
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .floating-action-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 99;
+        }
+
+        .floating-action-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .section-numbering {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section-numbering select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .section-hierarchy {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .section-hierarchy select {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--medium-gray);
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         @media (max-width: 768px) {
-
-            body {
-
-                padding: 15px;
-
+            .container {
+                padding: 10px;
             }
 
             .section {
-
                 padding: 15px;
-
             }
 
             h1 {
+                font-size: 1.8rem;
+            }
 
-                font-size: 24px;
-
+            h2 {
+                font-size: 1.3rem;
             }
 
             .content-options {
-
                 flex-direction: column;
-
                 gap: 8px;
-
             }
 
+            .btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .step-navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
 
+        /* Animação de loading */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
-
 </head>
-
 <body>
-
-    <h1>Gerador de Trabalhos Acadêmicos - Normas ABNT</h1>
-
-    
-
-    <form id="workForm">
-
-        <div class="section">
-
-            <h2>Informações Básicas</h2>
-
-            <div class="form-group">
-
-                <label for="institutionLogo">Logo da Instituição (opcional):</label>
-
-                <input type="file" id="institutionLogo" accept="image/*">
-
-                <img id="logoPreview" class="logo-preview">
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="institution" class="required-field">Nome da Instituição:</label>
-
-                <input type="text" id="institution" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="faculty" class="required-field">Faculdade/Departamento:</label>
-
-                <input type="text" id="faculty" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="course" class="required-field">Curso:</label>
-
-                <input type="text" id="course" required>
-
-            </div>
-
+    <div class="container">
+        <h1><i class="fas fa-file-alt"></i> Gerador de Trabalhos Acadêmicos - Normas ABNT</h1>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
         </div>
 
-        
-
-        <div class="section">
-
-            <h2>Dados do Trabalho</h2>
-
-            <div class="form-group">
-
-                <label for="title" class="required-field">Título do trabalho:</label>
-
-                <input type="text" id="title" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="subtitle">Subtítulo (se houver):</label>
-
-                <input type="text" id="subtitle">
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="author" class="required-field">Autor(es):</label>
-
-                <input type="text" id="author" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="professor" class="required-field">Professor/Orientador:</label>
-
-                <input type="text" id="professor" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="discipline" class="required-field">Disciplina:</label>
-
-                <input type="text" id="discipline" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="city" class="required-field">Cidade:</label>
-
-                <input type="text" id="city" required>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="year" class="required-field">Ano:</label>
-
-                <input type="number" id="year" required min="1900" max="2100" value="2023">
-
-            </div>
-
-
-
-            <div class="form-group">
-
-                <label for="frontPageText">Texto da Folha de Rosto:</label>
-
-                <textarea id="frontPageText" rows="4" placeholder="Texto que aparecerá na folha de rosto (ex: Trabalho acadêmico apresentado como requisito para avaliação parcial)">Trabalho acadêmico apresentado à disciplina como requisito para avaliação parcial.</textarea>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="approvalText">Texto da Folha de Aprovação (opcional):</label>
-
-                <textarea id="approvalText" rows="4" placeholder="Texto que aparecerá na folha de aprovação"></textarea>
-
-            </div>
-
-        </div>
-
-        
-
-        <div class="section">
-
-            <h2>Elementos Pré-Textuais</h2>
-
-            
-
-            <div class="optional-section">
-
-                <h3>Dedicatória (opcional)</h3>
-
-                <textarea id="dedication" rows="4" placeholder="Texto de dedicatória (se desejar incluir)"></textarea>
-
-            </div>
-
-            
-
-            <div class="optional-section">
-
-                <h3>Agradecimentos (opcional)</h3>
-
-                <textarea id="acknowledgments" rows="4" placeholder="Texto de agradecimentos (se desejar incluir)"></textarea>
-
-            </div>
-
-            
-
-            <div class="optional-section">
-
-                <h3>Epígrafe (opcional)</h3>
-
-                <textarea id="epigraph" rows="4" placeholder="Citação ou pensamento inspirador (se desejar incluir)"></textarea>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label for="abstract" class="required-field">Resumo:</label>
-
-                <textarea id="abstract" rows="6" required placeholder="Digite o resumo do trabalho (máximo 500 palavras). Deve conter objetivo, metodologia, resultados e conclusões."></textarea>
-
-                <div style="font-size: 12px; color: #666; margin-top: 5px;">Palavras-chave (separadas por vírgula):</div>
-
-                <input type="text" id="keywords" placeholder="Exemplo: educação, tecnologia, aprendizagem" style="margin-top: 5px;">
-
-            </div>
-
-            
-
-            <div class="optional-section">
-
-                <h3>Abstract (Resumo em Inglês - opcional)</h3>
-
-                <textarea id="englishAbstract" rows="6" placeholder="English abstract (if required)"></textarea>
-
-                <div style="font-size: 12px; color: #666; margin-top: 5px;">Keywords (separated by commas):</div>
-
-                <input type="text" id="englishKeywords" placeholder="Example: education, technology, learning" style="margin-top: 5px;">
-
-            </div>
-
-            
-
-            <div class="optional-section">
-
-                <h3>Lista de Abreviaturas e Siglas (opcional)</h3>
-
-                <textarea id="abbreviations" rows="4" placeholder="Digite cada abreviatura seguida de sua definição, separadas por dois pontos. Exemplo: ABNT: Associação Brasileira de Normas Técnicas"></textarea>
-
-            </div>
-
-        </div>
-
-        
-
-        <div class="section">
-
-            <h2>Conteúdo do Trabalho</h2>
-
-            
-
-            <div class="form-group">
-
-                <label for="introduction" class="required-field">Introdução:</label>
-
-                <textarea id="introduction" rows="8" required placeholder="Descreva o contexto, justificativa, objetivos e estrutura do trabalho."></textarea>
-
-            </div>
-
-            
-
-            <div class="form-group">
-
-                <label class="required-field">Desenvolvimento:</label>
-
-                <div id="developmentSections">
-
-                    <div class="development-section" data-section="1">
-
-                        <div class="section-title">Seção 2.1</div>
-
-                        <input type="text" class="section-title-input" placeholder="Título da seção (ex: Metodologia)" required>
-
-                        
-
-                        <div class="content-options">
-
-                            <button type="button" class="btn-add-content" onclick="addTextArea(this)">+ Texto</button>
-
-                            <button type="button" class="btn-add-content" onclick="addListOptions(this)">+ Lista</button>
-
-                            <button type="button" class="btn-add-content" onclick="addImageInput(this)">+ Imagem</button>
-
-                            <button type="button" class="btn-add-content" onclick="addTableInput(this)">+ Tabela</button>
-
-                            <button type="button" class="btn-add-content" onclick="addFootnoteInput(this)">+ Nota de Rodapé</button>
-
+        <form id="workForm">
+            <!-- Passo 1: Informações Básicas -->
+            <div class="form-step active" id="step1">
+                <div class="section">
+                    <div class="section-counter">1</div>
+                    <h2><i class="fas fa-info-circle"></i> Informações Básicas</h2>
+                    
+                    <div class="form-group">
+                        <label for="institutionLogo">Logo da Instituição (opcional):</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="institutionLogo" class="btn btn-secondary" style="margin-bottom: 0;">
+                                <i class="fas fa-upload"></i> Selecionar Logo
+                            </label>
+                            <span id="logoFileName">Nenhum arquivo selecionado</span>
                         </div>
+                        <input type="file" id="institutionLogo" accept="image/*" style="display: none;">
+                        <img id="logoPreview" class="logo-preview">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="institution" class="required-field">Nome da Instituição:</label>
+                        <input type="text" id="institution" class="form-control" required placeholder="Ex: Universidade Federal de Minas Gerais">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="faculty" class="required-field">Faculdade/Departamento:</label>
+                        <input type="text" id="faculty" class="form-control" required placeholder="Ex: Faculdade de Letras">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="course" class="required-field">Curso:</label>
+                        <input type="text" id="course" class="form-control" required placeholder="Ex: Letras - Língua Portuguesa">
+                    </div>
+                </div>
+                
+                <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(1, 2)">Próximo <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
 
-                        
-
-                        <div class="section-content">
-
-                            <textarea class="content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
-
-                        </div>
-
-                        
-
-                        <button type="button" class="btn-remove" onclick="removeDevelopmentSection(this)">Remover Seção</button>
-
+            <!-- Passo 2: Dados do Trabalho -->
+            <div class="form-step" id="step2">
+                <div class="section">
+                    <div class="section-counter">2</div>
+                    <h2><i class="fas fa-file-signature"></i> Dados do Trabalho</h2>
+                    
+                    <div class="form-group">
+                        <label for="title" class="required-field">Título do trabalho:</label>
+                        <input type="text" id="title" class="form-control" required placeholder="Ex: Análise do uso de metáforas em textos jornalísticos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subtitle">Subtítulo (se houver):</label>
+                        <input type="text" id="subtitle" class="form-control" placeholder="Ex: Um estudo comparativo entre dois jornais de grande circulação">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="author" class="required-field">Autor(es):</label>
+                        <input type="text" id="author" class="form-control" required placeholder="Ex: João da Silva, Maria Oliveira">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="professor" class="required-field">Professor/Orientador:</label>
+                        <input type="text" id="professor" class="form-control" required placeholder="Ex: Prof. Dr. Carlos Alberto">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discipline" class="required-field">Disciplina:</label>
+                        <input type="text" id="discipline" class="form-control" required placeholder="Ex: Teoria Literária">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="city" class="required-field">Cidade:</label>
+                        <input type="text" id="city" class="form-control" required placeholder="Ex: Belo Horizonte">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="year" class="required-field">Ano:</label>
+                        <input type="number" id="year" class="form-control" required min="1900" max="2100" value="2023">
                     </div>
 
+                    <div class="form-group">
+                        <label for="frontPageText">Texto da Folha de Rosto:</label>
+                        <textarea id="frontPageText" class="form-control" rows="4" placeholder="Texto que aparecerá na folha de rosto (ex: Trabalho acadêmico apresentado como requisito para avaliação parcial)">Trabalho acadêmico apresentado à disciplina como requisito para avaliação parcial.</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="approvalText">Texto da Folha de Aprovação (opcional):</label>
+                        <textarea id="approvalText" class="form-control" rows="4" placeholder="Texto que aparecerá na folha de aprovação"></textarea>
+                    </div>
                 </div>
-
-                <button type="button" class="btn-add-section" onclick="addDevelopmentSection()">Adicionar Seção</button>
-
+                
+                <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(2, 3)">Próximo <i class="fas fa-arrow-right"></i></button>
+                </div>
             </div>
 
-            
-
-            <div class="form-group">
-
-                <label for="conclusion" class="required-field">Conclusão:</label>
-
-                <textarea id="conclusion" rows="8" required placeholder="Apresente as considerações finais, resultados alcançados e possíveis desdobramentos."></textarea>
-
+            <!-- Passo 3: Elementos Pré-Textuais -->
+            <div class="form-step" id="step3">
+                <div class="section">
+                    <div class="section-counter">3</div>
+                    <h2><i class="fas fa-book-open"></i> Elementos Pré-Textuais</h2>
+                    
+                    <div class="optional-section">
+                        <h3><i class="fas fa-heart"></i> Dedicatória (opcional)</h3>
+                        <textarea id="dedication" class="form-control" rows="4" placeholder="Texto de dedicatória (se desejar incluir)"></textarea>
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3><i class="fas fa-hands-helping"></i> Agradecimentos (opcional)</h3>
+                        <textarea id="acknowledgments" class="form-control" rows="4" placeholder="Texto de agradecimentos (se desejar incluir)"></textarea>
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3><i class="fas fa-quote-right"></i> Epígrafe (opcional)</h3>
+                        <textarea id="epigraph" class="form-control" rows="4" placeholder="Citação ou pensamento inspirador (se desejar incluir)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="abstract" class="required-field">Resumo:</label>
+                        <textarea id="abstract" class="form-control" rows="6" required placeholder="Digite o resumo do trabalho (máximo 500 palavras). Deve conter objetivo, metodologia, resultados e conclusões."></textarea>
+                        <div style="font-size: 14px; color: #666; margin-top: 5px;">
+                            Palavras-chave (separadas por vírgula):
+                            <span class="tooltip">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Exemplo: educação, tecnologia, aprendizagem</span>
+                            </span>
+                        </div>
+                        <input type="text" id="keywords" class="form-control" placeholder="Exemplo: educação, tecnologia, aprendizagem" style="margin-top: 5px;">
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3><i class="fas fa-language"></i> Abstract (Resumo em Inglês - opcional)</h3>
+                        <textarea id="englishAbstract" class="form-control" rows="6" placeholder="English abstract (if required)"></textarea>
+                        <div style="font-size: 14px; color: #666; margin-top: 5px;">
+                            Keywords (separated by commas):
+                            <span class="tooltip">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Example: education, technology, learning</span>
+                            </span>
+                        </div>
+                        <input type="text" id="englishKeywords" class="form-control" placeholder="Example: education, technology, learning" style="margin-top: 5px;">
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3><i class="fas fa-abacus"></i> Lista de Abreviaturas e Siglas (opcional)</h3>
+                        <textarea id="abbreviations" class="form-control" rows="4" placeholder="Digite cada abreviatura seguida de sua definição, separadas por dois pontos. Exemplo: ABNT: Associação Brasileira de Normas Técnicas"></textarea>
+                    </div>
+                </div>
+                
+                <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(3, 4)">Próximo <i class="fas fa-arrow-right"></i></button>
+                </div>
             </div>
 
+            <!-- Passo 4: Conteúdo do Trabalho -->
+            <div class="form-step" id="step4">
+                <div class="section">
+                    <div class="section-counter">4</div>
+                    <h2><i class="fas fa-file-contract"></i> Conteúdo do Trabalho</h2>
+                    
+                    <div class="form-group">
+                        <label for="introduction" class="required-field">Introdução:</label>
+                        <textarea id="introduction" class="form-control" rows="8" required placeholder="Descreva o contexto, justificativa, objetivos e estrutura do trabalho."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required-field">Desenvolvimento:</label>
+                        <div id="developmentSections">
+                            <div class="development-section" data-section="1">
+                                <div class="section-hierarchy">
+                                    <select class="section-parent" onchange="updateSectionNumbering(this)">
+                                        <option value="0">Seção Principal</option>
+                                    </select>
+                                    <select class="section-level" onchange="updateSectionNumbering(this)">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                    <span class="section-number">1</span>
+                                </div>
+                                <input type="text" class="section-title-input form-control" placeholder="Título da seção (ex: Metodologia)" required>
+                                
+                                <div class="content-options">
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTextArea(this)">
+                                        <i class="fas fa-align-left"></i> Texto
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addListOptions(this)">
+                                        <i class="fas fa-list-ul"></i> Lista
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addImageInput(this)">
+                                        <i class="fas fa-image"></i> Imagem
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTableInput(this)">
+                                        <i class="fas fa-table"></i> Tabela
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addFootnoteInput(this)">
+                                        <i class="fas fa-sticky-note"></i> Nota
+                                    </button>
+                                </div>
+                                
+                                <div class="section-content">
+                                    <textarea class="form-control content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
+                                </div>
+                                
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeDevelopmentSection(this)">
+                                    <i class="fas fa-trash"></i> Remover Seção
+                                </button>
+                            </div>
+                        </div>
+                        <div class="section-actions">
+                            <button type="button" class="btn btn-primary" onclick="addDevelopmentSection()">
+                                <i class="fas fa-plus"></i> Adicionar Seção Principal
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="addSubsection()">
+                                <i class="fas fa-indent"></i> Adicionar Subseção
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="conclusion" class="required-field">Conclusão:</label>
+                        <textarea id="conclusion" class="form-control" rows="8" required placeholder="Apresente as considerações finais, resultados alcançados e possíveis desdobramentos."></textarea>
+                    </div>
+                </div>
+                
+                <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(4, 5)">Próximo <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Passo 5: Elementos Pós-Textuais -->
+            <div class="form-step" id="step5">
+                <div class="section">
+                    <div class="section-counter">5</div>
+                    <h2><i class="fas fa-book"></i> Elementos Pós-Textuais</h2>
+                    
+                    <div class="form-group">
+                        <label for="references" class="required-field">Referências Bibliográficas (uma por linha):</label>
+                        <textarea id="references" class="form-control" rows="8" required placeholder="Exemplo: SOBRENOME, Nome. Título do livro. Edição. Local: Editora, ano."></textarea>
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3><i class="fas fa-file-alt"></i> Apêndices (opcional)</h3>
+                        <textarea id="appendices" class="form-control" rows="4" placeholder="Liste os apêndices (um por linha)"></textarea>
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3><i class="fas fa-file-archive"></i> Anexos (opcional)</h3>
+                        <textarea id="annexes" class="form-control" rows="4" placeholder="Liste os anexos (um por linha)"></textarea>
+                    </div>
+                </div>
+                
+                <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(5, 4)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <button type="button" class="btn btn-primary" id="generatePdfBtn" onclick="showConfirmationModal()">
+                        <i class="fas fa-file-pdf"></i> Gerar PDF
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="confirmation-modal" id="confirmationModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-check-circle"></i> Confirmar Geração do PDF</h2>
+            <p>Você tem certeza que deseja gerar o PDF com as informações fornecidas? Verifique se todos os campos obrigatórios estão preenchidos corretamente.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideConfirmationModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="generatePDF()">Confirmar</button>
+            </div>
         </div>
+    </div>
 
-        
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
 
-        <div class="section">
-
-            <h2>Elementos Pós-Textuais</h2>
-
-            
-
-            <div class="form-group">
-
-                <label for="references" class="required-field">Referências Bibliográficas (uma por linha):</label>
-
-                <textarea id="references" rows="8" required placeholder="Exemplo: SOBRENOME, Nome. Título do livro. Edição. Local: Editora, ano."></textarea>
-
-            </div>
-
-            
-
-            <div class="optional-section">
-
-                <h3>Apêndices (opcional)</h3>
-
-                <textarea id="appendices" rows="4" placeholder="Liste os apêndices (um por linha)"></textarea>
-
-            </div>
-
-            
-
-            <div class="optional-section">
-
-                <h3>Anexos (opcional)</h3>
-
-                <textarea id="annexes" rows="4" placeholder="Liste os anexos (um por linha)"></textarea>
-
-            </div>
-
-        </div>
-
-        
-
-        <button type="button" class="btn-primary" onclick="generatePDF()">Gerar Trabalho em PDF</button>
-
-    </form>
-
-
+    <!-- Botão Flutuante de Ajuda -->
+    <div class="floating-action-btn" onclick="showHelp()">
+        <i class="fas fa-question"></i>
+    </div>
 
     <script src="script.js"></script>
+    <script>
+        // Funções para navegação entre passos
+        function nextStep(current, next) {
+            document.getElementById(`step${current}`).classList.remove('active');
+            document.getElementById(`step${next}`).classList.add('active');
+            updateProgressBar(next);
+            window.scrollTo(0, 0);
+        }
 
+        function prevStep(current, prev) {
+            document.getElementById(`step${current}`).classList.remove('active');
+            document.getElementById(`step${prev}`).classList.add('active');
+            updateProgressBar(prev);
+            window.scrollTo(0, 0);
+        }
+
+        // Atualizar barra de progresso
+        function updateProgressBar(step) {
+            const progress = (step / 5) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // Mostrar modal de confirmação
+        function showConfirmationModal() {
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        // Esconder modal de confirmação
+        function hideConfirmationModal() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        // Mostrar ajuda
+        function showHelp() {
+            alert("Precisa de ajuda? Preencha todos os campos obrigatórios marcados com * e siga as instruções em cada seção. Clique no ícone de informação para dicas adicionais.");
+        }
+
+        // Preview da logo da instituição
+        document.getElementById('institutionLogo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileNameElement = document.getElementById('logoFileName');
+            
+            if (file) {
+                fileNameElement.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.getElementById('logoPreview');
+                    img.src = event.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileNameElement.textContent = 'Nenhum arquivo selecionado';
+                document.getElementById('logoPreview').style.display = 'none';
+            }
+        });
+
+        // Mostrar loading spinner
+        function showLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'flex';
+        }
+
+        // Esconder loading spinner
+        function hideLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        // Atualizar progresso inicial
+        updateProgressBar(1);
+
+        // Funções para hierarquia de seções
+        function updateSectionNumbering(selectElement) {
+            const sectionDiv = selectElement.closest('.development-section');
+            const parentSelect = sectionDiv.querySelector('.section-parent');
+            const levelSelect = sectionDiv.querySelector('.section-level');
+            const numberSpan = sectionDiv.querySelector('.section-number');
+            
+            const parentValue = parentSelect.value;
+            const levelValue = levelSelect.value;
+            
+            if (parentValue === "0") {
+                // Seção principal
+                numberSpan.textContent = levelValue;
+            } else {
+                // Subseção
+                const parentSection = document.querySelector(`.development-section[data-section="${parentValue}"]`);
+                if (parentSection) {
+                    const parentNumber = parentSection.querySelector('.section-number').textContent;
+                    numberSpan.textContent = `${parentNumber}.${levelValue}`;
+                }
+            }
+        }
+
+        function addDevelopmentSection() {
+            const container = document.getElementById('developmentSections');
+            const sectionCount = container.children.length + 1;
+            
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'development-section';
+            sectionDiv.setAttribute('data-section', sectionCount);
+            
+            // Obter opções de seções pais
+            let parentOptions = '<option value="0">Seção Principal</option>';
+            for (let i = 1; i < sectionCount; i++) {
+                parentOptions += `<option value="${i}">Seção ${i}</option>`;
+            }
+            
+            sectionDiv.innerHTML = `
+                <div class="section-hierarchy">
+                    <select class="section-parent" onchange="updateSectionNumbering(this)">
+                        ${parentOptions}
+                    </select>
+                    <select class="section-level" onchange="updateSectionNumbering(this)">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                    <span class="section-number">${sectionCount}</span>
+                </div>
+                <input type="text" class="section-title-input form-control" placeholder="Título da seção" required>
+                
+                <div class="content-options">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTextArea(this)">
+                        <i class="fas fa-align-left"></i> Texto
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addListOptions(this)">
+                        <i class="fas fa-list-ul"></i> Lista
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addImageInput(this)">
+                        <i class="fas fa-image"></i> Imagem
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTableInput(this)">
+                        <i class="fas fa-table"></i> Tabela
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addFootnoteInput(this)">
+                        <i class="fas fa-sticky-note"></i> Nota
+                    </button>
+                </div>
+                
+                <div class="section-content">
+                    <textarea class="form-control content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
+                </div>
+                
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeDevelopmentSection(this)">
+                    <i class="fas fa-trash"></i> Remover Seção
+                </button>
+            `;
+            
+            container.appendChild(sectionDiv);
+        }
+
+        function addSubsection() {
+            const container = document.getElementById('developmentSections');
+            const sectionCount = container.children.length + 1;
+            
+            // Encontrar a última seção para ser a pai
+            const lastSection = container.lastElementChild;
+            const lastSectionNumber = lastSection.getAttribute('data-section');
+            
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'development-section';
+            sectionDiv.setAttribute('data-section', sectionCount);
+            
+            // Obter opções de seções pais
+            let parentOptions = '<option value="0">Seção Principal</option>';
+            for (let i = 1; i < sectionCount; i++) {
+                const selected = i == lastSectionNumber ? 'selected' : '';
+                parentOptions += `<option value="${i}" ${selected}>Seção ${i}</option>`;
+            }
+            
+            sectionDiv.innerHTML = `
+                <div class="section-hierarchy">
+                    <select class="section-parent" onchange="updateSectionNumbering(this)">
+                        ${parentOptions}
+                    </select>
+                    <select class="section-level" onchange="updateSectionNumbering(this)">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                    <span class="section-number">${lastSectionNumber}.1</span>
+                </div>
+                <input type="text" class="section-title-input form-control" placeholder="Título da subseção" required>
+                
+                <div class="content-options">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTextArea(this)">
+                        <i class="fas fa-align-left"></i> Texto
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addListOptions(this)">
+                        <i class="fas fa-list-ul"></i> Lista
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addImageInput(this)">
+                        <i class="fas fa-image"></i> Imagem
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTableInput(this)">
+                        <i class="fas fa-table"></i> Tabela
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addFootnoteInput(this)">
+                        <i class="fas fa-sticky-note"></i> Nota
+                    </button>
+                </div>
+                
+                <div class="section-content">
+                    <textarea class="form-control content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
+                </div>
+                
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeDevelopmentSection(this)">
+                    <i class="fas fa-trash"></i> Remover Seção
+                </button>
+            `;
+            
+            container.appendChild(sectionDiv);
+        }
+
+        function removeDevelopmentSection(button) {
+            const container = document.getElementById('developmentSections');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+                
+                // Atualizar números das seções
+                const sections = container.querySelectorAll('.development-section');
+                sections.forEach((section, index) => {
+                    section.setAttribute('data-section', index + 1);
+                    
+                    // Atualizar opções de seções pais
+                    const parentSelect = section.querySelector('.section-parent');
+                    if (parentSelect) {
+                        let parentOptions = '<option value="0">Seção Principal</option>';
+                        for (let i = 1; i <= sections.length; i++) {
+                            if (i !== (index + 1)) {
+                                parentOptions += `<option value="${i}">Seção ${i}</option>`;
+                            }
+                        }
+                        parentSelect.innerHTML = parentOptions;
+                    }
+                });
+            } else {
+                alert('O trabalho deve ter pelo menos uma seção de desenvolvimento.');
+            }
+        }
+    </script>
 </body>
-
 </html>
