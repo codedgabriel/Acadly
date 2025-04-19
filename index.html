@@ -1,330 +1,809 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Gerador de Trabalhos Acadêmicos ABNT</title>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
+
         body {
+
             font-family: 'Times New Roman', Times, serif;
+
             max-width: 900px;
+
             margin: 0 auto;
+
             padding: 30px;
+
             line-height: 1.6;
+
             color: #333;
+
             background-color: #f8f9fa;
+
         }
+
         .form-group {
+
             margin-bottom: 25px;
+
         }
+
         label {
+
             display: block;
+
             margin-bottom: 8px;
+
             font-weight: 600;
+
             color: #2c3e50;
+
         }
+
         input, textarea, select {
+
             width: 100%;
+
             padding: 12px;
+
             box-sizing: border-box;
+
             border: 1px solid #ced4da;
+
             border-radius: 4px;
+
             font-size: 15px;
+
             transition: border-color 0.3s;
+
             font-family: 'Times New Roman', Times, serif;
+
         }
+
         input:focus, textarea:focus, select:focus {
+
             border-color: #4CAF50;
+
             outline: none;
+
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+
         }
+
         button {
+
             color: white;
+
             padding: 12px 18px;
+
             border: none;
+
             cursor: pointer;
+
             margin-top: 10px;
+
             border-radius: 4px;
+
             font-size: 14px;
+
             font-weight: 600;
+
             transition: all 0.3s;
+
             font-family: 'Times New Roman', Times, serif;
+
         }
+
         .btn-primary {
+
             background-color: #4CAF50;
+
         }
+
         .btn-primary:hover {
+
             background-color: #3d8b40;
+
             transform: translateY(-2px);
+
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
         }
+
         .logo-preview {
+
             max-width: 200px;
+
             max-height: 100px;
+
             margin: 15px 0;
+
             object-fit: contain;
+
             display: none;
+
             border: 1px solid #ddd;
+
             padding: 5px;
+
             background: white;
+
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
         }
+
         .section {
+
             background: white;
+
             padding: 25px;
+
             margin-bottom: 30px;
+
             border-radius: 8px;
+
             border: 1px solid #e0e0e0;
+
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
         }
+
         .development-section {
+
             margin-bottom: 25px;
+
             border: 1px solid #e0e0e0;
+
             padding: 20px;
+
             border-radius: 6px;
+
             background: #f8fafc;
+
             position: relative;
+
         }
+
         .btn-add-section {
+
             background-color: #2196F3;
+
             margin-right: 10px;
+
         }
+
         .btn-add-section:hover {
+
             background-color: #0b7dda;
+
         }
+
         .btn-remove {
+
             background-color: #f44336;
+
         }
+
         .btn-remove:hover {
+
             background-color: #d32f2f;
+
         }
-        .image-upload {
+
+        .image-upload, .table-upload, .footnote-input {
+
             margin: 20px 0;
+
             padding: 15px;
+
             background: white;
+
             border-radius: 6px;
+
             border: 1px dashed #ccc;
+
         }
+
         .image-preview {
+
             max-width: 100%;
+
             max-height: 200px;
+
             margin-top: 15px;
+
             object-fit: contain;
+
             display: none;
+
             border: 1px solid #ddd;
+
             padding: 5px;
+
             background: white;
+
         }
+
         .section-title {
+
             font-weight: bold;
+
             margin-bottom: 15px;
+
             color: #2c3e50;
+
             font-size: 16px;
+
         }
+
         h1 {
+
             color: #2c3e50;
+
             text-align: center;
+
             margin-bottom: 40px;
+
             font-size: 28px;
+
             font-weight: 700;
+
             padding-bottom: 15px;
+
             border-bottom: 2px solid #4CAF50;
+
         }
+
         h2 {
+
             color: #34495e;
+
             border-bottom: 1px solid #eee;
+
             padding-bottom: 12px;
+
             margin-top: 0;
+
             font-size: 22px;
+
             font-weight: 600;
+
         }
+
         .content-options {
+
             margin: 15px 0;
+
             display: flex;
+
             gap: 12px;
+
             flex-wrap: wrap;
+
         }
+
         .btn-add-content {
+
             background-color: #9c27b0;
+
             padding: 10px 15px;
+
         }
+
         .btn-add-content:hover {
+
             background-color: #7b1fa2;
+
         }
+
         .list-type {
+
             margin: 20px 0;
+
             padding: 15px;
+
             background: white;
+
             border-radius: 6px;
+
             border: 1px solid #e0e0e0;
+
         }
+
         .list-items {
+
             margin-top: 15px;
+
         }
+
         .list-item {
+
             margin-bottom: 12px;
+
             display: flex;
+
             align-items: center;
+
             gap: 10px;
+
         }
+
         .list-item input {
+
             flex-grow: 1;
+
             margin-right: 0;
+
         }
+
         .btn-remove-item {
+
             background-color: #ff9800;
+
             padding: 8px 12px;
+
             flex-shrink: 0;
+
         }
+
         .btn-remove-item:hover {
+
             background-color: #f57c00;
+
         }
+
         .content-text {
+
             margin-bottom: 20px;
+
             min-height: 120px;
+
         }
+
         .required-field::after {
+
             content: " *";
+
             color: #f44336;
+
         }
+
+        .table-preview {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 10px;
+
+        }
+
+        .table-preview td {
+
+            border: 1px solid #ddd;
+
+            padding: 8px;
+
+            text-align: left;
+
+        }
+
+        .optional-section {
+
+            background-color: #f5f5f5;
+
+            border-left: 4px solid #4CAF50;
+
+            padding: 15px;
+
+            margin-bottom: 20px;
+
+        }
+
+        .optional-section h3 {
+
+            margin-top: 0;
+
+            color: #2c3e50;
+
+        }
+
         @media (max-width: 768px) {
+
             body {
+
                 padding: 15px;
+
             }
+
             .section {
+
                 padding: 15px;
+
             }
+
             h1 {
+
                 font-size: 24px;
+
             }
+
+            .content-options {
+
+                flex-direction: column;
+
+                gap: 8px;
+
+            }
+
         }
+
     </style>
+
 </head>
+
 <body>
+
     <h1>Gerador de Trabalhos Acadêmicos - Normas ABNT</h1>
+
     
+
     <form id="workForm">
+
         <div class="section">
+
             <h2>Informações Básicas</h2>
-            <div class="form-group">
-                <label for="institutionLogo">Logo da Instituição (opcional):</label>
-                <input type="file" id="institutionLogo" accept="image/*">
-                <img id="logoPreview" class="logo-preview">
-            </div>
-            
-            <div class="form-group">
-                <label for="institution" class="required-field">Nome da Instituição:</label>
-                <input type="text" id="institution" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="faculty" class="required-field">Faculdade/Departamento:</label>
-                <input type="text" id="faculty" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="course" class="required-field">Curso:</label>
-                <input type="text" id="course" required>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>Dados do Trabalho</h2>
-            <div class="form-group">
-                <label for="title" class="required-field">Título do trabalho:</label>
-                <input type="text" id="title" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="subtitle">Subtítulo (se houver):</label>
-                <input type="text" id="subtitle">
-            </div>
-            
-            <div class="form-group">
-                <label for="author" class="required-field">Autor(es):</label>
-                <input type="text" id="author" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="professor" class="required-field">Professor/Orientador:</label>
-                <input type="text" id="professor" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="discipline" class="required-field">Disciplina:</label>
-                <input type="text" id="discipline" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="city" class="required-field">Cidade:</label>
-                <input type="text" id="city" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="year" class="required-field">Ano:</label>
-                <input type="number" id="year" required min="1900" max="2100" value="2023">
-            </div>
 
             <div class="form-group">
-                <label for="frontPageText">Texto da Folha de Rosto:</label>
-                <textarea id="frontPageText" rows="4" placeholder="Texto que aparecerá na folha de rosto (ex: Trabalho acadêmico apresentado como requisito para avaliação parcial)">Trabalho acadêmico apresentado à disciplina como requisito para avaliação parcial.</textarea>
+
+                <label for="institutionLogo">Logo da Instituição (opcional):</label>
+
+                <input type="file" id="institutionLogo" accept="image/*">
+
+                <img id="logoPreview" class="logo-preview">
+
             </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="institution" class="required-field">Nome da Instituição:</label>
+
+                <input type="text" id="institution" required>
+
+            </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="faculty" class="required-field">Faculdade/Departamento:</label>
+
+                <input type="text" id="faculty" required>
+
+            </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="course" class="required-field">Curso:</label>
+
+                <input type="text" id="course" required>
+
+            </div>
+
         </div>
+
         
+
         <div class="section">
-            <h2>Conteúdo do Trabalho</h2>
-            
-            <!-- Adição do campo Resumo -->
+
+            <h2>Dados do Trabalho</h2>
+
             <div class="form-group">
-                <label for="abstract" class="required-field">Resumo:</label>
-                <textarea id="abstract" rows="6" required placeholder="Digite o resumo do trabalho (máximo 500 palavras). Deve conter objetivo, metodologia, resultados e conclusões."></textarea>
-                <div style="font-size: 12px; color: #666; margin-top: 5px;">Palavras-chave (separadas por vírgula):</div>
-                <input type="text" id="keywords" placeholder="Exemplo: educação, tecnologia, aprendizagem" style="margin-top: 5px;">
+
+                <label for="title" class="required-field">Título do trabalho:</label>
+
+                <input type="text" id="title" required>
+
             </div>
+
             
+
             <div class="form-group">
-                <label for="introduction" class="required-field">Introdução:</label>
-                <textarea id="introduction" rows="8" required placeholder="Descreva o contexto, justificativa, objetivos e estrutura do trabalho."></textarea>
+
+                <label for="subtitle">Subtítulo (se houver):</label>
+
+                <input type="text" id="subtitle">
+
             </div>
+
             
+
             <div class="form-group">
-                <label class="required-field">Desenvolvimento:</label>
-                <div id="developmentSections">
-                    <div class="development-section" data-section="1">
-                        <div class="section-title">Seção 2.1</div>
-                        <input type="text" class="section-title-input" placeholder="Título da seção (ex: Metodologia)" required>
-                        
-                        <div class="content-options">
-                            <button type="button" class="btn-add-content" onclick="addTextArea(this)">+ Texto</button>
-                            <button type="button" class="btn-add-content" onclick="addListOptions(this)">+ Lista</button>
-                            <button type="button" class="btn-add-content" onclick="addImageInput(this)">+ Imagem</button>
-                        </div>
-                        
-                        <div class="section-content">
-                            <textarea class="content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
-                        </div>
-                        
-                        <button type="button" class="btn-remove" onclick="removeDevelopmentSection(this)">Remover Seção</button>
-                    </div>
-                </div>
-                <button type="button" class="btn-add-section" onclick="addDevelopmentSection()">Adicionar Seção</button>
+
+                <label for="author" class="required-field">Autor(es):</label>
+
+                <input type="text" id="author" required>
+
             </div>
+
             
+
             <div class="form-group">
-                <label for="conclusion" class="required-field">Conclusão:</label>
-                <textarea id="conclusion" rows="8" required placeholder="Apresente as considerações finais, resultados alcançados e possíveis desdobramentos."></textarea>
+
+                <label for="professor" class="required-field">Professor/Orientador:</label>
+
+                <input type="text" id="professor" required>
+
             </div>
+
             
+
             <div class="form-group">
-                <label for="references" class="required-field">Referências Bibliográficas (uma por linha):</label>
-                <textarea id="references" rows="8" required placeholder="Exemplo: SOBRENOME, Nome. Título do livro. Edição. Local: Editora, ano."></textarea>
+
+                <label for="discipline" class="required-field">Disciplina:</label>
+
+                <input type="text" id="discipline" required>
+
             </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="city" class="required-field">Cidade:</label>
+
+                <input type="text" id="city" required>
+
+            </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="year" class="required-field">Ano:</label>
+
+                <input type="number" id="year" required min="1900" max="2100" value="2023">
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="frontPageText">Texto da Folha de Rosto:</label>
+
+                <textarea id="frontPageText" rows="4" placeholder="Texto que aparecerá na folha de rosto (ex: Trabalho acadêmico apresentado como requisito para avaliação parcial)">Trabalho acadêmico apresentado à disciplina como requisito para avaliação parcial.</textarea>
+
+            </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="approvalText">Texto da Folha de Aprovação (opcional):</label>
+
+                <textarea id="approvalText" rows="4" placeholder="Texto que aparecerá na folha de aprovação"></textarea>
+
+            </div>
+
         </div>
+
         
+
+        <div class="section">
+
+            <h2>Elementos Pré-Textuais</h2>
+
+            
+
+            <div class="optional-section">
+
+                <h3>Dedicatória (opcional)</h3>
+
+                <textarea id="dedication" rows="4" placeholder="Texto de dedicatória (se desejar incluir)"></textarea>
+
+            </div>
+
+            
+
+            <div class="optional-section">
+
+                <h3>Agradecimentos (opcional)</h3>
+
+                <textarea id="acknowledgments" rows="4" placeholder="Texto de agradecimentos (se desejar incluir)"></textarea>
+
+            </div>
+
+            
+
+            <div class="optional-section">
+
+                <h3>Epígrafe (opcional)</h3>
+
+                <textarea id="epigraph" rows="4" placeholder="Citação ou pensamento inspirador (se desejar incluir)"></textarea>
+
+            </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="abstract" class="required-field">Resumo:</label>
+
+                <textarea id="abstract" rows="6" required placeholder="Digite o resumo do trabalho (máximo 500 palavras). Deve conter objetivo, metodologia, resultados e conclusões."></textarea>
+
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">Palavras-chave (separadas por vírgula):</div>
+
+                <input type="text" id="keywords" placeholder="Exemplo: educação, tecnologia, aprendizagem" style="margin-top: 5px;">
+
+            </div>
+
+            
+
+            <div class="optional-section">
+
+                <h3>Abstract (Resumo em Inglês - opcional)</h3>
+
+                <textarea id="englishAbstract" rows="6" placeholder="English abstract (if required)"></textarea>
+
+                <div style="font-size: 12px; color: #666; margin-top: 5px;">Keywords (separated by commas):</div>
+
+                <input type="text" id="englishKeywords" placeholder="Example: education, technology, learning" style="margin-top: 5px;">
+
+            </div>
+
+            
+
+            <div class="optional-section">
+
+                <h3>Lista de Abreviaturas e Siglas (opcional)</h3>
+
+                <textarea id="abbreviations" rows="4" placeholder="Digite cada abreviatura seguida de sua definição, separadas por dois pontos. Exemplo: ABNT: Associação Brasileira de Normas Técnicas"></textarea>
+
+            </div>
+
+        </div>
+
+        
+
+        <div class="section">
+
+            <h2>Conteúdo do Trabalho</h2>
+
+            
+
+            <div class="form-group">
+
+                <label for="introduction" class="required-field">Introdução:</label>
+
+                <textarea id="introduction" rows="8" required placeholder="Descreva o contexto, justificativa, objetivos e estrutura do trabalho."></textarea>
+
+            </div>
+
+            
+
+            <div class="form-group">
+
+                <label class="required-field">Desenvolvimento:</label>
+
+                <div id="developmentSections">
+
+                    <div class="development-section" data-section="1">
+
+                        <div class="section-title">Seção 2.1</div>
+
+                        <input type="text" class="section-title-input" placeholder="Título da seção (ex: Metodologia)" required>
+
+                        
+
+                        <div class="content-options">
+
+                            <button type="button" class="btn-add-content" onclick="addTextArea(this)">+ Texto</button>
+
+                            <button type="button" class="btn-add-content" onclick="addListOptions(this)">+ Lista</button>
+
+                            <button type="button" class="btn-add-content" onclick="addImageInput(this)">+ Imagem</button>
+
+                            <button type="button" class="btn-add-content" onclick="addTableInput(this)">+ Tabela</button>
+
+                            <button type="button" class="btn-add-content" onclick="addFootnoteInput(this)">+ Nota de Rodapé</button>
+
+                        </div>
+
+                        
+
+                        <div class="section-content">
+
+                            <textarea class="content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
+
+                        </div>
+
+                        
+
+                        <button type="button" class="btn-remove" onclick="removeDevelopmentSection(this)">Remover Seção</button>
+
+                    </div>
+
+                </div>
+
+                <button type="button" class="btn-add-section" onclick="addDevelopmentSection()">Adicionar Seção</button>
+
+            </div>
+
+            
+
+            <div class="form-group">
+
+                <label for="conclusion" class="required-field">Conclusão:</label>
+
+                <textarea id="conclusion" rows="8" required placeholder="Apresente as considerações finais, resultados alcançados e possíveis desdobramentos."></textarea>
+
+            </div>
+
+        </div>
+
+        
+
+        <div class="section">
+
+            <h2>Elementos Pós-Textuais</h2>
+
+            
+
+            <div class="form-group">
+
+                <label for="references" class="required-field">Referências Bibliográficas (uma por linha):</label>
+
+                <textarea id="references" rows="8" required placeholder="Exemplo: SOBRENOME, Nome. Título do livro. Edição. Local: Editora, ano."></textarea>
+
+            </div>
+
+            
+
+            <div class="optional-section">
+
+                <h3>Apêndices (opcional)</h3>
+
+                <textarea id="appendices" rows="4" placeholder="Liste os apêndices (um por linha)"></textarea>
+
+            </div>
+
+            
+
+            <div class="optional-section">
+
+                <h3>Anexos (opcional)</h3>
+
+                <textarea id="annexes" rows="4" placeholder="Liste os anexos (um por linha)"></textarea>
+
+            </div>
+
+        </div>
+
+        
+
         <button type="button" class="btn-primary" onclick="generatePDF()">Gerar Trabalho em PDF</button>
+
     </form>
 
+
+
     <script src="script.js"></script>
+
 </body>
+
 </html>
