@@ -3,1145 +3,694 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Trabalhos Acadêmicos ABNT</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Acadly - Revolucionando sua Vida Acadêmica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #4CAF50;
-            --accent-color: #3498db;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --light-gray: #f8f9fa;
-            --medium-gray: #e0e0e0;
-            --dark-gray: #333;
-            --white: #ffffff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-extra-light: #93c5fd;
+            --dark: #020617;
+            --darker: #030712;
+            --light: #e2e8f0;
+            --lighter: #f8fafc;
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --card-border: rgba(59, 130, 246, 0.2);
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --bg: #010409;
+            --bg-gradient: linear-gradient(135deg, #020617 0%, #030712 100%);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        .light-mode {
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --primary-dark: #2563eb;
+            --primary-extra-light: #bfdbfe;
+            --dark: #ffffff;
+            --darker: #f8fafc;
+            --light: #1e293b;
+            --lighter: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(203, 213, 225, 0.5);
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --bg: #f8fafc;
+            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            --success: #059669;
+            --warning: #d97706;
+            --error: #dc2626;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--dark-gray);
-            background-color: var(--light-gray);
-            padding: 20px;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
         }
 
-        .container {
+        /* Efeito de gradiente simplificado */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: var(--bg-gradient);
+        }
+
+        header {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--dark);
+            position: relative;
+            z-index: 10;
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--card-border);
+            transition: var(--transition);
+        }
+
+        .light-mode header {
+            background-color: var(--dark);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .logo i {
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 44px;
+            height: 24px;
+            background-color: var(--card-bg);
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            left: 3px;
+            transition: var(--transition);
+        }
+
+        .light-mode .theme-toggle::after {
+            left: calc(100% - 21px);
+            background-color: var(--primary);
+        }
+
+        .github-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background-color: var(--card-bg);
+            color: var(--text);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+        }
+
+        .github-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 2.5vw, 3rem);
+            margin-bottom: 16px;
+            color: var(--primary);
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .tools-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2rem;
-            font-weight: 700;
-            padding-bottom: 15px;
-            border-bottom: 3px solid var(--secondary-color);
-            position: relative;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background-color: var(--accent-color);
-        }
-
-        h2 {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--medium-gray);
-            position: relative;
-        }
-
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 50px;
-            height: 2px;
-            background-color: var(--secondary-color);
-        }
-
-        .section {
-            background: var(--white);
-            padding: 25px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .section:hover {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--primary-color);
-            position: relative;
-        }
-
-        .required-field::after {
-            content: " *";
-            color: var(--danger-color);
-            font-weight: bold;
-        }
-
-        .form-control {
             width: 100%;
-            padding: 12px 15px;
-            font-size: 16px;
-            border: 1px solid var(--medium-gray);
-            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .tool-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            text-align: center;
             transition: var(--transition);
-            font-family: 'Roboto', sans-serif;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .form-control:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-light);
         }
 
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
+        .tool-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: var(--primary);
+            transition: var(--transition);
         }
 
-        .btn {
+        .tool-card:hover .tool-icon {
+            transform: scale(1.1);
+            color: var(--primary-light);
+        }
+
+        .tool-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            line-height: 1.6;
+        }
+
+        .tool-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 12px 20px;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            width: 100%;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 500;
             cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 0.9rem;
         }
 
-        .btn i {
-            margin-right: 8px;
-        }
-
-        .btn-primary {
-            background-color: var(--secondary-color);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background-color: #3e8e41;
+        .tool-btn:hover {
+            background-color: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: var(--shadow);
         }
 
-        .btn-secondary {
-            background-color: var(--accent-color);
-            color: var(--white);
+        .tool-btn i {
+            margin-left: 8px;
+            font-size: 0.8rem;
         }
 
-        .btn-secondary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: var(--white);
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .btn-warning {
-            background-color: var(--warning-color);
-            color: var(--white);
-        }
-
-        .btn-warning:hover {
-            background-color: #d35400;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .btn-sm {
-            padding: 8px 12px;
-            font-size: 14px;
-        }
-
-        .logo-preview {
-            max-width: 200px;
-            max-height: 100px;
-            margin: 15px 0;
-            object-fit: contain;
-            display: none;
-            border: 1px solid var(--medium-gray);
-            padding: 5px;
-            background: var(--white);
-            border-radius: 4px;
-        }
-
-        .development-section {
-            margin-bottom: 25px;
-            border: 1px solid var(--medium-gray);
-            padding: 20px;
-            border-radius: 6px;
-            background: #f8fafc;
-            position: relative;
-            transition: var(--transition);
-        }
-
-        .development-section:hover {
-            border-color: var(--accent-color);
-        }
-
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-title i {
-            margin-right: 8px;
-            color: var(--accent-color);
-        }
-
-        .content-options {
-            margin: 15px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .section-content {
-            margin-top: 15px;
-        }
-
-        .image-upload, .table-upload, .footnote-input, .list-type {
-            margin: 20px 0;
-            padding: 15px;
-            background: var(--white);
-            border-radius: 6px;
-            border: 1px dashed var(--medium-gray);
-            position: relative;
-        }
-
-        .image-upload::before {
-            content: "Imagem";
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            background: var(--white);
-            padding: 0 5px;
-            font-size: 12px;
-            color: var(--primary-color);
-        }
-
-        .table-upload::before {
-            content: "Tabela";
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            background: var(--white);
-            padding: 0 5px;
-            font-size: 12px;
-            color: var(--primary-color);
-        }
-
-        .footnote-input::before {
-            content: "Nota de Rodapé";
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            background: var(--white);
-            padding: 0 5px;
-            font-size: 12px;
-            color: var(--primary-color);
-        }
-
-        .list-type::before {
-            content: "Lista";
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            background: var(--white);
-            padding: 0 5px;
-            font-size: 12px;
-            color: var(--primary-color);
-        }
-
-        .image-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 15px;
-            object-fit: contain;
-            display: none;
-            border: 1px solid var(--medium-gray);
-            padding: 5px;
-            background: var(--white);
-            border-radius: 4px;
-        }
-
-        .list-items {
-            margin-top: 15px;
-        }
-
-        .list-item {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .list-item input {
-            flex-grow: 1;
-            margin-right: 0;
-        }
-
-        .table-preview {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .table-preview td {
-            border: 1px solid var(--medium-gray);
-            padding: 8px;
-            text-align: left;
-        }
-
-        .optional-section {
-            background-color: #f5f5f5;
-            border-left: 4px solid var(--secondary-color);
-            padding: 15px;
-            margin-bottom: 20px;
-            position: relative;
-            border-radius: 4px;
-        }
-
-        .optional-section h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-        }
-
-        .optional-section h3 i {
-            margin-right: 8px;
-            color: var(--accent-color);
-        }
-
-        .progress-container {
-            width: 100%;
-            background-color: #f1f1f1;
-            border-radius: 5px;
-            margin-bottom: 30px;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
-
-        .progress-bar {
-            height: 10px;
-            background-color: var(--secondary-color);
-            border-radius: 5px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .form-step {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .form-step.active {
-            display: block;
-        }
-
-        .step-navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            margin-left: 5px;
-            color: var(--accent-color);
-            cursor: help;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: var(--primary-color);
-            color: var(--white);
+        footer {
             text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 14px;
-            font-weight: normal;
+            padding: 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background-color: var(--darker);
+            border-top: 1px solid var(--card-border);
         }
 
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .section-counter {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--accent-color);
-            color: var(--white);
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .floating-action-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background-color: var(--secondary-color);
-            color: var(--white);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
             transition: var(--transition);
-            z-index: 99;
         }
 
-        .floating-action-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        footer a:hover {
+            text-decoration: underline;
         }
 
-        .confirmation-modal {
-            display: none;
+        /* Modal simplificado */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
         }
 
         .modal-content {
-            background-color: var(--white);
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 500px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
             width: 90%;
+            max-width: 450px;
+            padding: 24px;
+            position: relative;
+            border: 1px solid var(--card-border);
             box-shadow: var(--shadow);
-            animation: modalFadeIn 0.3s ease;
         }
 
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
         }
 
-        .section-numbering {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
+        .close-modal:hover {
+            color: var(--primary);
         }
 
-        .section-numbering select {
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid var(--medium-gray);
+        .modal h2 {
+            margin-bottom: 16px;
+            color: var(--primary);
+            font-size: 1.5rem;
         }
 
-        .section-hierarchy {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .modal p {
+            margin-bottom: 16px;
+            line-height: 1.6;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .modal ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            color: var(--text);
+            list-style-type: none;
+        }
+
+        .modal ul li {
             margin-bottom: 10px;
+            position: relative;
+            padding-left: 24px;
+            line-height: 1.6;
         }
 
-        .section-hierarchy select {
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: 1px solid var(--medium-gray);
-            font-size: 14px;
+        .modal ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Notificação simplificada */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 100;
+            max-width: 300px;
         }
 
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .section {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            h2 {
-                font-size: 1.3rem;
-            }
-
-            .content-options {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .btn {
-                width: 100%;
-                margin-bottom: 5px;
-            }
-
-            .step-navigation {
-                flex-direction: column;
-                gap: 10px;
-            }
+        .notification.error {
+            background-color: var(--error);
         }
 
-        /* Animação de loading */
-        .loading-spinner {
-            display: none;
+        .notification.warning {
+            background-color: var(--warning);
+        }
+
+        /* Loading screen simplificada */
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1001;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--secondary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .loading-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 24px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loading-bar {
+            width: 180px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            animation: loading 1.5s ease-in-out forwards;
+        }
+
+        @keyframes loading {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header {
+                padding: 14px 20px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .logo i {
+                font-size: 22px;
+            }
+            
+            .github-btn span {
+                display: none;
+            }
+            
+            .github-btn {
+                padding: 8px;
+            }
+            
+            .tools-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                padding: 8px;
+            }
+            
+            .tool-card {
+                padding: 20px;
+                min-height: 200px;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tools-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            
+            .hero p {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1><i class="fas fa-file-alt"></i> Gerador de Trabalhos Acadêmicos - Normas ABNT</h1>
+<body class="dark-mode">
+    <div class="gradient-bg"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Acadly</span>
+        </div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+    
+    <header>
+        <a href="#" class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Acadly</span>
+        </a>
         
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+        <div class="header-controls">
+            <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema"></button>
+            <a href="https://github.com/codedgabriel/acadly" target="_blank" class="github-btn">
+                <i class="fab fa-github"></i>
+                <span>Apoie</span>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <p>Tudo o que você precisa em um só lugar</p>
         </div>
 
-        <form id="workForm">
-            <!-- Passo 1: Informações Básicas -->
-            <div class="form-step active" id="step1">
-                <div class="section">
-                    <div class="section-counter">1</div>
-                    <h2><i class="fas fa-info-circle"></i> Informações Básicas</h2>
-                    
-                    <div class="form-group">
-                        <label for="institutionLogo">Logo da Instituição (opcional):</label>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <label for="institutionLogo" class="btn btn-secondary" style="margin-bottom: 0;">
-                                <i class="fas fa-upload"></i> Selecionar Logo
-                            </label>
-                            <span id="logoFileName">Nenhum arquivo selecionado</span>
-                        </div>
-                        <input type="file" id="institutionLogo" accept="image/*" style="display: none;">
-                        <img id="logoPreview" class="logo-preview">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="institution" class="required-field">Nome da Instituição:</label>
-                        <input type="text" id="institution" class="form-control" required placeholder="Ex: Universidade Federal de Minas Gerais">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="faculty" class="required-field">Faculdade/Departamento:</label>
-                        <input type="text" id="faculty" class="form-control" required placeholder="Ex: Faculdade de Letras">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="course" class="required-field">Curso:</label>
-                        <input type="text" id="course" class="form-control" required placeholder="Ex: Letras - Língua Portuguesa">
-                    </div>
+        <div class="tools-container">
+            <div class="tool-card" onclick="openTool('gerador-trabalhos')">
+                <div class="tool-icon">
+                    <i class="fas fa-file-alt"></i>
                 </div>
-                
-                <div class="step-navigation">
-                    <button type="button" class="btn btn-secondary" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(1, 2)">Próximo <i class="fas fa-arrow-right"></i></button>
-                </div>
+                <h3>Gerador de Trabalhos</h3>
+                <p>Estruturas completas seguindo normas ABNT</p>
+                <button class="tool-btn">Acessar <i class="fas fa-arrow-right"></i></button>
             </div>
+        </div>
+    </main>
 
-            <!-- Passo 2: Dados do Trabalho -->
-            <div class="form-step" id="step2">
-                <div class="section">
-                    <div class="section-counter">2</div>
-                    <h2><i class="fas fa-file-signature"></i> Dados do Trabalho</h2>
-                    
-                    <div class="form-group">
-                        <label for="title" class="required-field">Título do trabalho:</label>
-                        <input type="text" id="title" class="form-control" required placeholder="Ex: Análise do uso de metáforas em textos jornalísticos">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="subtitle">Subtítulo (se houver):</label>
-                        <input type="text" id="subtitle" class="form-control" placeholder="Ex: Um estudo comparativo entre dois jornais de grande circulação">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="author" class="required-field">Autor(es):</label>
-                        <input type="text" id="author" class="form-control" required placeholder="Ex: João da Silva, Maria Oliveira">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="professor" class="required-field">Professor/Orientador:</label>
-                        <input type="text" id="professor" class="form-control" required placeholder="Ex: Prof. Dr. Carlos Alberto">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="discipline" class="required-field">Disciplina:</label>
-                        <input type="text" id="discipline" class="form-control" required placeholder="Ex: Teoria Literária">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="city" class="required-field">Cidade:</label>
-                        <input type="text" id="city" class="form-control" required placeholder="Ex: Belo Horizonte">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="year" class="required-field">Ano:</label>
-                        <input type="number" id="year" class="form-control" required min="1900" max="2100" value="2023">
-                    </div>
+    <footer>
+        <a href="https://github.com/codedgabriel" target="_blank">codegabriel © 2025 acadly.com.br - Projeto open-source</a>
+    </footer>
 
-                    <div class="form-group">
-                        <label for="frontPageText">Texto da Folha de Rosto:</label>
-                        <textarea id="frontPageText" class="form-control" rows="4" placeholder="Texto que aparecerá na folha de rosto (ex: Trabalho acadêmico apresentado como requisito para avaliação parcial)">Trabalho acadêmico apresentado à disciplina como requisito para avaliação parcial.</textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="approvalText">Texto da Folha de Aprovação (opcional):</label>
-                        <textarea id="approvalText" class="form-control" rows="4" placeholder="Texto que aparecerá na folha de aprovação"></textarea>
-                    </div>
-                </div>
-                
-                <div class="step-navigation">
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(2, 3)">Próximo <i class="fas fa-arrow-right"></i></button>
-                </div>
-            </div>
-
-            <!-- Passo 3: Elementos Pré-Textuais -->
-            <div class="form-step" id="step3">
-                <div class="section">
-                    <div class="section-counter">3</div>
-                    <h2><i class="fas fa-book-open"></i> Elementos Pré-Textuais</h2>
-                    
-                    <div class="optional-section">
-                        <h3><i class="fas fa-heart"></i> Dedicatória (opcional)</h3>
-                        <textarea id="dedication" class="form-control" rows="4" placeholder="Texto de dedicatória (se desejar incluir)"></textarea>
-                    </div>
-                    
-                    <div class="optional-section">
-                        <h3><i class="fas fa-hands-helping"></i> Agradecimentos (opcional)</h3>
-                        <textarea id="acknowledgments" class="form-control" rows="4" placeholder="Texto de agradecimentos (se desejar incluir)"></textarea>
-                    </div>
-                    
-                    <div class="optional-section">
-                        <h3><i class="fas fa-quote-right"></i> Epígrafe (opcional)</h3>
-                        <textarea id="epigraph" class="form-control" rows="4" placeholder="Citação ou pensamento inspirador (se desejar incluir)"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="abstract" class="required-field">Resumo:</label>
-                        <textarea id="abstract" class="form-control" rows="6" required placeholder="Digite o resumo do trabalho (máximo 500 palavras). Deve conter objetivo, metodologia, resultados e conclusões."></textarea>
-                        <div style="font-size: 14px; color: #666; margin-top: 5px;">
-                            Palavras-chave (separadas por vírgula):
-                            <span class="tooltip">
-                                <i class="fas fa-info-circle"></i>
-                                <span class="tooltiptext">Exemplo: educação, tecnologia, aprendizagem</span>
-                            </span>
-                        </div>
-                        <input type="text" id="keywords" class="form-control" placeholder="Exemplo: educação, tecnologia, aprendizagem" style="margin-top: 5px;">
-                    </div>
-                    
-                    <div class="optional-section">
-                        <h3><i class="fas fa-language"></i> Abstract (Resumo em Inglês - opcional)</h3>
-                        <textarea id="englishAbstract" class="form-control" rows="6" placeholder="English abstract (if required)"></textarea>
-                        <div style="font-size: 14px; color: #666; margin-top: 5px;">
-                            Keywords (separated by commas):
-                            <span class="tooltip">
-                                <i class="fas fa-info-circle"></i>
-                                <span class="tooltiptext">Example: education, technology, learning</span>
-                            </span>
-                        </div>
-                        <input type="text" id="englishKeywords" class="form-control" placeholder="Example: education, technology, learning" style="margin-top: 5px;">
-                    </div>
-                    
-                    <div class="optional-section">
-                        <h3><i class="fas fa-abacus"></i> Lista de Abreviaturas e Siglas (opcional)</h3>
-                        <textarea id="abbreviations" class="form-control" rows="4" placeholder="Digite cada abreviatura seguida de sua definição, separadas por dois pontos. Exemplo: ABNT: Associação Brasileira de Normas Técnicas"></textarea>
-                    </div>
-                </div>
-                
-                <div class="step-navigation">
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(3, 4)">Próximo <i class="fas fa-arrow-right"></i></button>
-                </div>
-            </div>
-
-            <!-- Passo 4: Conteúdo do Trabalho -->
-            <div class="form-step" id="step4">
-                <div class="section">
-                    <div class="section-counter">4</div>
-                    <h2><i class="fas fa-file-contract"></i> Conteúdo do Trabalho</h2>
-                    
-                    <div class="form-group">
-                        <label for="introduction" class="required-field">Introdução:</label>
-                        <textarea id="introduction" class="form-control" rows="8" required placeholder="Descreva o contexto, justificativa, objetivos e estrutura do trabalho."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="required-field">Desenvolvimento:</label>
-                        <div id="developmentSections">
-                            <div class="development-section" data-section="1">
-                                <div class="section-hierarchy">
-                                    <select class="section-parent" onchange="updateSectionNumbering(this)">
-                                        <option value="0">Seção Principal</option>
-                                    </select>
-                                    <select class="section-level" onchange="updateSectionNumbering(this)">
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                    </select>
-                                    <span class="section-number">1</span>
-                                </div>
-                                <input type="text" class="section-title-input form-control" placeholder="Título da seção (ex: Metodologia)" required>
-                                
-                                <div class="content-options">
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTextArea(this)">
-                                        <i class="fas fa-align-left"></i> Texto
-                                    </button>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addListOptions(this)">
-                                        <i class="fas fa-list-ul"></i> Lista
-                                    </button>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addImageInput(this)">
-                                        <i class="fas fa-image"></i> Imagem
-                                    </button>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTableInput(this)">
-                                        <i class="fas fa-table"></i> Tabela
-                                    </button>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addFootnoteInput(this)">
-                                        <i class="fas fa-sticky-note"></i> Nota
-                                    </button>
-                                </div>
-                                
-                                <div class="section-content">
-                                    <textarea class="form-control content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
-                                </div>
-                                
-                                <button type="button" class="btn btn-danger btn-sm" onclick="removeDevelopmentSection(this)">
-                                    <i class="fas fa-trash"></i> Remover Seção
-                                </button>
-                            </div>
-                        </div>
-                        <div class="section-actions">
-                            <button type="button" class="btn btn-primary" onclick="addDevelopmentSection()">
-                                <i class="fas fa-plus"></i> Adicionar Seção Principal
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="addSubsection()">
-                                <i class="fas fa-indent"></i> Adicionar Subseção
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="conclusion" class="required-field">Conclusão:</label>
-                        <textarea id="conclusion" class="form-control" rows="8" required placeholder="Apresente as considerações finais, resultados alcançados e possíveis desdobramentos."></textarea>
-                    </div>
-                </div>
-                
-                <div class="step-navigation">
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(4, 5)">Próximo <i class="fas fa-arrow-right"></i></button>
-                </div>
-            </div>
-
-            <!-- Passo 5: Elementos Pós-Textuais -->
-            <div class="form-step" id="step5">
-                <div class="section">
-                    <div class="section-counter">5</div>
-                    <h2><i class="fas fa-book"></i> Elementos Pós-Textuais</h2>
-                    
-                    <div class="form-group">
-                        <label for="references" class="required-field">Referências Bibliográficas (uma por linha):</label>
-                        <textarea id="references" class="form-control" rows="8" required placeholder="Exemplo: SOBRENOME, Nome. Título do livro. Edição. Local: Editora, ano."></textarea>
-                    </div>
-                    
-                    <div class="optional-section">
-                        <h3><i class="fas fa-file-alt"></i> Apêndices (opcional)</h3>
-                        <textarea id="appendices" class="form-control" rows="4" placeholder="Liste os apêndices (um por linha)"></textarea>
-                    </div>
-                    
-                    <div class="optional-section">
-                        <h3><i class="fas fa-file-archive"></i> Anexos (opcional)</h3>
-                        <textarea id="annexes" class="form-control" rows="4" placeholder="Liste os anexos (um por linha)"></textarea>
-                    </div>
-                </div>
-                
-                <div class="step-navigation">
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(5, 4)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                    <button type="button" class="btn btn-primary" id="generatePdfBtn" onclick="showConfirmationModal()">
-                        <i class="fas fa-file-pdf"></i> Gerar PDF
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Modal de Confirmação -->
-    <div class="confirmation-modal" id="confirmationModal">
+    <div class="modal" id="githubModal">
         <div class="modal-content">
-            <h2><i class="fas fa-check-circle"></i> Confirmar Geração do PDF</h2>
-            <p>Você tem certeza que deseja gerar o PDF com as informações fornecidas? Verifique se todos os campos obrigatórios estão preenchidos corretamente.</p>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="hideConfirmationModal()">Cancelar</button>
-                <button class="btn btn-primary" onclick="generatePDF()">Confirmar</button>
-            </div>
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <h2>Contribua com o Acadly</h2>
+            <p>Este projeto é desenvolvido pela comunidade e sua contribuição é valiosa para revolucionar a educação!</p>
+            <ul>
+                <li>Dê uma estrela no GitHub para nos apoiar</li>
+                <li>Reporte bugs ou problemas que encontrar</li>
+                <li>Sugira novas funcionalidades inovadoras</li>
+                <li>Contribua com código e melhore a plataforma</li>
+            </ul>
+            <a href="https://github.com/codedgabriel/acadly" target="_blank" class="tool-btn" style="text-decoration: none; display: inline-block;">
+                <i class="fab fa-github"></i> Acessar Repositório
+            </a>
         </div>
     </div>
 
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner"></div>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Bem-vindo ao Acadly!</span>
     </div>
 
-    <!-- Botão Flutuante de Ajuda -->
-    <div class="floating-action-btn" onclick="showHelp()">
-        <i class="fas fa-question"></i>
-    </div>
-
-    <script src="script.js"></script>
     <script>
-        // Funções para navegação entre passos
-        function nextStep(current, next) {
-            document.getElementById(`step${current}`).classList.remove('active');
-            document.getElementById(`step${next}`).classList.add('active');
-            updateProgressBar(next);
-            window.scrollTo(0, 0);
+        // Toggle de tema simplificado
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Verificar preferência do usuário
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('theme');
+        
+        // Aplicar tema salvo ou preferência do sistema
+        if (savedTheme) {
+            body.classList.add(savedTheme);
+        } else {
+            body.classList.add(prefersDark ? 'dark-mode' : 'light-mode');
         }
-
-        function prevStep(current, prev) {
-            document.getElementById(`step${current}`).classList.remove('active');
-            document.getElementById(`step${prev}`).classList.add('active');
-            updateProgressBar(prev);
-            window.scrollTo(0, 0);
-        }
-
-        // Atualizar barra de progresso
-        function updateProgressBar(step) {
-            const progress = (step / 5) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-        }
-
-        // Mostrar modal de confirmação
-        function showConfirmationModal() {
-            document.getElementById('confirmationModal').style.display = 'flex';
-        }
-
-        // Esconder modal de confirmação
-        function hideConfirmationModal() {
-            document.getElementById('confirmationModal').style.display = 'none';
-        }
-
-        // Mostrar ajuda
-        function showHelp() {
-            alert("Precisa de ajuda? Preencha todos os campos obrigatórios marcados com * e siga as instruções em cada seção. Clique no ícone de informação para dicas adicionais.");
-        }
-
-        // Preview da logo da instituição
-        document.getElementById('institutionLogo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const fileNameElement = document.getElementById('logoFileName');
-            
-            if (file) {
-                fileNameElement.textContent = file.name;
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = document.getElementById('logoPreview');
-                    img.src = event.target.result;
-                    img.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        
+        // Alternar tema
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('light-mode')) {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark-mode');
+                showNotification('Modo escuro ativado');
             } else {
-                fileNameElement.textContent = 'Nenhum arquivo selecionado';
-                document.getElementById('logoPreview').style.display = 'none';
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light-mode');
+                showNotification('Modo claro ativado');
             }
         });
-
-        // Mostrar loading spinner
-        function showLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'flex';
-        }
-
-        // Esconder loading spinner
-        function hideLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'none';
-        }
-
-        // Atualizar progresso inicial
-        updateProgressBar(1);
-
-        // Funções para hierarquia de seções
-        function updateSectionNumbering(selectElement) {
-            const sectionDiv = selectElement.closest('.development-section');
-            const parentSelect = sectionDiv.querySelector('.section-parent');
-            const levelSelect = sectionDiv.querySelector('.section-level');
-            const numberSpan = sectionDiv.querySelector('.section-number');
-            
-            const parentValue = parentSelect.value;
-            const levelValue = levelSelect.value;
-            
-            if (parentValue === "0") {
-                // Seção principal
-                numberSpan.textContent = levelValue;
+        
+        // Abrir ferramenta
+        function openTool(tool) {
+            if (tool === 'github') {
+                document.getElementById('githubModal').classList.add('active');
             } else {
-                // Subseção
-                const parentSection = document.querySelector(`.development-section[data-section="${parentValue}"]`);
-                if (parentSection) {
-                    const parentNumber = parentSection.querySelector('.section-number').textContent;
-                    numberSpan.textContent = `${parentNumber}.${levelValue}`;
-                }
+                const toolNames = {
+                    'gerador-trabalhos': 'Gerador de Trabalhos Acadêmicos'
+                };
+                
+                showNotification(`Abrindo: ${toolNames[tool]}`);
             }
         }
 
-        function addDevelopmentSection() {
-            const container = document.getElementById('developmentSections');
-            const sectionCount = container.children.length + 1;
-            
-            const sectionDiv = document.createElement('div');
-            sectionDiv.className = 'development-section';
-            sectionDiv.setAttribute('data-section', sectionCount);
-            
-            // Obter opções de seções pais
-            let parentOptions = '<option value="0">Seção Principal</option>';
-            for (let i = 1; i < sectionCount; i++) {
-                parentOptions += `<option value="${i}">Seção ${i}</option>`;
-            }
-            
-            sectionDiv.innerHTML = `
-                <div class="section-hierarchy">
-                    <select class="section-parent" onchange="updateSectionNumbering(this)">
-                        ${parentOptions}
-                    </select>
-                    <select class="section-level" onchange="updateSectionNumbering(this)">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
-                    <span class="section-number">${sectionCount}</span>
-                </div>
-                <input type="text" class="section-title-input form-control" placeholder="Título da seção" required>
-                
-                <div class="content-options">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTextArea(this)">
-                        <i class="fas fa-align-left"></i> Texto
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addListOptions(this)">
-                        <i class="fas fa-list-ul"></i> Lista
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addImageInput(this)">
-                        <i class="fas fa-image"></i> Imagem
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTableInput(this)">
-                        <i class="fas fa-table"></i> Tabela
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addFootnoteInput(this)">
-                        <i class="fas fa-sticky-note"></i> Nota
-                    </button>
-                </div>
-                
-                <div class="section-content">
-                    <textarea class="form-control content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
-                </div>
-                
-                <button type="button" class="btn btn-danger btn-sm" onclick="removeDevelopmentSection(this)">
-                    <i class="fas fa-trash"></i> Remover Seção
-                </button>
-            `;
-            
-            container.appendChild(sectionDiv);
+        // Fechar modal
+        function closeModal() {
+            const modal = document.getElementById('githubModal');
+            modal.classList.remove('active');
         }
 
-        function addSubsection() {
-            const container = document.getElementById('developmentSections');
-            const sectionCount = container.children.length + 1;
-            
-            // Encontrar a última seção para ser a pai
-            const lastSection = container.lastElementChild;
-            const lastSectionNumber = lastSection.getAttribute('data-section');
-            
-            const sectionDiv = document.createElement('div');
-            sectionDiv.className = 'development-section';
-            sectionDiv.setAttribute('data-section', sectionCount);
-            
-            // Obter opções de seções pais
-            let parentOptions = '<option value="0">Seção Principal</option>';
-            for (let i = 1; i < sectionCount; i++) {
-                const selected = i == lastSectionNumber ? 'selected' : '';
-                parentOptions += `<option value="${i}" ${selected}>Seção ${i}</option>`;
+        // Mostrar modal do GitHub após 30 segundos
+        setTimeout(() => {
+            const alreadyShown = localStorage.getItem('githubModalShown');
+            if (!alreadyShown) {
+                document.getElementById('githubModal').classList.add('active');
+                localStorage.setItem('githubModalShown', 'true');
             }
+        }, 30000);
+
+        // Notificação
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
             
-            sectionDiv.innerHTML = `
-                <div class="section-hierarchy">
-                    <select class="section-parent" onchange="updateSectionNumbering(this)">
-                        ${parentOptions}
-                    </select>
-                    <select class="section-level" onchange="updateSectionNumbering(this)">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
-                    <span class="section-number">${lastSectionNumber}.1</span>
-                </div>
-                <input type="text" class="section-title-input form-control" placeholder="Título da subseção" required>
-                
-                <div class="content-options">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTextArea(this)">
-                        <i class="fas fa-align-left"></i> Texto
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addListOptions(this)">
-                        <i class="fas fa-list-ul"></i> Lista
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addImageInput(this)">
-                        <i class="fas fa-image"></i> Imagem
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addTableInput(this)">
-                        <i class="fas fa-table"></i> Tabela
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="addFootnoteInput(this)">
-                        <i class="fas fa-sticky-note"></i> Nota
-                    </button>
-                </div>
-                
-                <div class="section-content">
-                    <textarea class="form-control content-text" rows="6" placeholder="Conteúdo textual (pressione Enter para novos parágrafos)"></textarea>
-                </div>
-                
-                <button type="button" class="btn btn-danger btn-sm" onclick="removeDevelopmentSection(this)">
-                    <i class="fas fa-trash"></i> Remover Seção
-                </button>
-            `;
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
             
-            container.appendChild(sectionDiv);
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
-        function removeDevelopmentSection(button) {
-            const container = document.getElementById('developmentSections');
-            if (container.children.length > 1) {
-                button.parentElement.remove();
+        // Loading screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.visibility = 'hidden';
                 
-                // Atualizar números das seções
-                const sections = container.querySelectorAll('.development-section');
-                sections.forEach((section, index) => {
-                    section.setAttribute('data-section', index + 1);
-                    
-                    // Atualizar opções de seções pais
-                    const parentSelect = section.querySelector('.section-parent');
-                    if (parentSelect) {
-                        let parentOptions = '<option value="0">Seção Principal</option>';
-                        for (let i = 1; i <= sections.length; i++) {
-                            if (i !== (index + 1)) {
-                                parentOptions += `<option value="${i}">Seção ${i}</option>`;
-                            }
-                        }
-                        parentSelect.innerHTML = parentOptions;
-                    }
-                });
-            } else {
-                alert('O trabalho deve ter pelo menos uma seção de desenvolvimento.');
-            }
-        }
+                // Mostrar notificação de boas-vindas
+                setTimeout(() => {
+                    showNotification('Bem-vindo ao Acadly! bom proveito as ferramentas.');
+                }, 500);
+            }, 1500);
+        });
     </script>
 </body>
 </html>
