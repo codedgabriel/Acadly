@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Currículo Compacto</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .form-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .form-section h2 {
+            color: #3498db;
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            margin: 15px auto;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .add-btn {
+            background-color: #27ae60;
+            padding: 6px 12px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        
+        .remove-btn {
+            background-color: #e74c3c;
+            padding: 6px 12px;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+        
+        .experience-item,
+        .education-item,
+        .skill-item {
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        #photoPreview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3498db;
+            display: block;
+            margin: 10px auto;
+        }
+        
+        .two-columns {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .two-columns > div {
+            flex: 1;
+        }
+        
+        .char-counter {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-align: right;
+            margin-top: 2px;
+        }
+        
+        @media (max-width: 600px) {
+            .two-columns {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerador de Currículo Compacto</h1>
+    
+    <form id="resumeForm">
+        <div class="two-columns">
+            <div>
+                <!-- Informações Pessoais -->
+                <div class="form-section">
+                    <h2>Informações Pessoais</h2>
+                    <div class="form-group">
+                        <label for="fullName">Nome Completo*</label>
+                        <input type="text" id="fullName" required maxlength="50">
+                        <div class="char-counter"><span id="nameCounter">0</span>/50</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="profession">Cargo/Profissão*</label>
+                        <input type="text" id="profession" required maxlength="40">
+                        <div class="char-counter"><span id="professionCounter">0</span>/40</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="photo">Foto (opcional)</label>
+                        <input type="file" id="photo" accept="image/*">
+                        <img id="photoPreview" src="" alt="Pré-visualização da foto" style="display: none;">
+                    </div>
+                </div>
+                
+                <!-- Contato -->
+                <div class="form-section">
+                    <h2>Contato</h2>
+                    <div class="form-group">
+                        <label for="email">E-mail*</label>
+                        <input type="email" id="email" required maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn</label>
+                        <input type="text" id="linkedin" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio">Portfólio/Site</label>
+                        <input type="text" id="portfolio" maxlength="50">
+                    </div>
+                </div>
+                
+                <!-- Habilidades -->
+                <div class="form-section">
+                    <h2>Habilidades Técnicas (3-5 principais)</h2>
+                    <div id="skillsContainer">
+                        <div class="skill-item">
+                            <div class="form-group">
+                                <label for="skillName1">Habilidade*</label>
+                                <input type="text" id="skillName1" required maxlength="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="skillLevel1">Nível*</label>
+                                <select id="skillLevel1" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Iniciante">Iniciante</option>
+                                    <option value="Intermediário">Intermediário</option>
+                                    <option value="Avançado">Avançado</option>
+                                    <option value="Especialista">Especialista</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addSkill">+ Adicionar Habilidade</button>
+                </div>
+            </div>
+            
+            <div>
+                <!-- Experiência Profissional -->
+                <div class="form-section">
+                    <h2>Experiência Profissional (últimos 3 empregos)</h2>
+                    <div id="experienceContainer">
+                        <div class="experience-item">
+                            <div class="form-group">
+                                <label for="jobTitle1">Cargo*</label>
+                                <input type="text" id="jobTitle1" required maxlength="40">
+                            </div>
+                            <div class="form-group">
+                                <label for="company1">Empresa*</label>
+                                <input type="text" id="company1" required maxlength="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="jobPeriod1">Período*</label>
+                                <input type="text" id="jobPeriod1" placeholder="MM/AAAA - MM/AAAA" required maxlength="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="jobDescription1">Realizações (1-2 frases)*</label>
+                                <textarea id="jobDescription1" required maxlength="200"></textarea>
+                                <div class="char-counter"><span id="jobDescCounter1">0</span>/200</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addExperience">+ Adicionar Experiência</button>
+                </div>
+                
+                <!-- Formação Acadêmica -->
+                <div class="form-section">
+                    <h2>Formação Acadêmica</h2>
+                    <div id="educationContainer">
+                        <div class="education-item">
+                            <div class="form-group">
+                                <label for="degree1">Curso*</label>
+                                <input type="text" id="degree1" required maxlength="40">
+                            </div>
+                            <div class="form-group">
+                                <label for="institution1">Instituição*</label>
+                                <input type="text" id="institution1" required maxlength="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="educationPeriod1">Período</label>
+                                <input type="text" id="educationPeriod1" placeholder="MM/AAAA - MM/AAAA" maxlength="20">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addEducation">+ Adicionar Formação</button>
+                </div>
+                
+                <!-- Idiomas -->
+                <div class="form-section">
+                    <h2>Idiomas</h2>
+                    <div id="languagesContainer">
+                        <div class="skill-item">
+                            <div class="form-group">
+                                <label for="languageName1">Idioma*</label>
+                                <input type="text" id="languageName1" required maxlength="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="languageLevel1">Nível*</label>
+                                <select id="languageLevel1" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Básico">Básico</option>
+                                    <option value="Intermediário">Intermediário</option>
+                                    <option value="Avançado">Avançado</option>
+                                    <option value="Fluente">Fluente</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addLanguage">+ Adicionar Idioma</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resumo -->
+        <div class="form-section">
+            <h2>Resumo Profissional (máx. 250 caracteres)</h2>
+            <div class="form-group">
+                <textarea id="summary" required maxlength="250" placeholder="Destaque suas principais qualificações e objetivos profissionais de forma concisa"></textarea>
+                <div class="char-counter"><span id="summaryCounter">0</span>/250</div>
+            </div>
+        </div>
+        
+        <button type="button" id="generateBtn">Gerar Currículo em PDF (1 Página)</button>
+    </form>
+
+    <script>
+        // Configuração do jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // Variáveis globais
+        let experienceCount = 1;
+        let educationCount = 1;
+        let skillCount = 1;
+        let languageCount = 1;
+        let photoDataUrl = '';
+        
+        // Inicializar contadores de caracteres
+        document.addEventListener('DOMContentLoaded', function() {
+            // Contadores de caracteres
+            document.getElementById('fullName').addEventListener('input', function() {
+                document.getElementById('nameCounter').textContent = this.value.length;
+            });
+            
+            document.getElementById('profession').addEventListener('input', function() {
+                document.getElementById('professionCounter').textContent = this.value.length;
+            });
+            
+            document.getElementById('summary').addEventListener('input', function() {
+                document.getElementById('summaryCounter').textContent = this.value.length;
+            });
+            
+            document.getElementById('jobDescription1').addEventListener('input', function() {
+                document.getElementById('jobDescCounter1').textContent = this.value.length;
+            });
+        });
+        
+        // Pré-visualizar foto
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.size < 500000) { // Limite de 500KB
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    photoDataUrl = event.target.result;
+                    const preview = document.getElementById('photoPreview');
+                    preview.src = photoDataUrl;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else if (file) {
+                alert('Por favor, selecione uma imagem menor que 500KB');
+                this.value = '';
+            }
+        });
+        
+        // Adicionar experiência profissional
+        document.getElementById('addExperience').addEventListener('click', function() {
+            if (experienceCount >= 3) {
+                alert('Para manter o currículo em uma página, limite de 3 experiências');
+                return;
+            }
+            
+            experienceCount++;
+            const newExperience = document.createElement('div');
+            newExperience.className = 'experience-item';
+            newExperience.innerHTML = `
+                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); experienceCount--;">Remover</button>
+                <div class="form-group">
+                    <label for="jobTitle${experienceCount}">Cargo*</label>
+                    <input type="text" id="jobTitle${experienceCount}" required maxlength="40">
+                </div>
+                <div class="form-group">
+                    <label for="company${experienceCount}">Empresa*</label>
+                    <input type="text" id="company${experienceCount}" required maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label for="jobPeriod${experienceCount}">Período*</label>
+                    <input type="text" id="jobPeriod${experienceCount}" placeholder="MM/AAAA - MM/AAAA" required maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="jobDescription${experienceCount}">Realizações (1-2 frases)*</label>
+                    <textarea id="jobDescription${experienceCount}" required maxlength="200"></textarea>
+                    <div class="char-counter"><span id="jobDescCounter${experienceCount}">0</span>/200</div>
+                </div>
+            `;
+            document.getElementById('experienceContainer').appendChild(newExperience);
+            
+            // Adicionar contador de caracteres para a nova descrição
+            document.getElementById(`jobDescription${experienceCount}`).addEventListener('input', function() {
+                document.getElementById(`jobDescCounter${experienceCount}`).textContent = this.value.length;
+            });
+        });
+        
+        // Adicionar formação acadêmica
+        document.getElementById('addEducation').addEventListener('click', function() {
+            if (educationCount >= 2) {
+                alert('Para manter o currículo em uma página, limite de 2 formações');
+                return;
+            }
+            
+            educationCount++;
+            const newEducation = document.createElement('div');
+            newEducation.className = 'education-item';
+            newEducation.innerHTML = `
+                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); educationCount--;">Remover</button>
+                <div class="form-group">
+                    <label for="degree${educationCount}">Curso*</label>
+                    <input type="text" id="degree${educationCount}" required maxlength="40">
+                </div>
+                <div class="form-group">
+                    <label for="institution${educationCount}">Instituição*</label>
+                    <input type="text" id="institution${educationCount}" required maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label for="educationPeriod${educationCount}">Período</label>
+                    <input type="text" id="educationPeriod${educationCount}" placeholder="MM/AAAA - MM/AAAA" maxlength="20">
+                </div>
+            `;
+            document.getElementById('educationContainer').appendChild(newEducation);
+        });
+        
+        // Adicionar habilidade
+        document.getElementById('addSkill').addEventListener('click', function() {
+            if (skillCount >= 5) {
+                alert('Para manter o currículo em uma página, limite de 5 habilidades');
+                return;
+            }
+            
+            skillCount++;
+            const newSkill = document.createElement('div');
+            newSkill.className = 'skill-item';
+            newSkill.innerHTML = `
+                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); skillCount--;">Remover</button>
+                <div class="form-group">
+                    <label for="skillName${skillCount}">Habilidade*</label>
+                    <input type="text" id="skillName${skillCount}" required maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label for="skillLevel${skillCount}">Nível*</label>
+                    <select id="skillLevel${skillCount}" required>
+                        <option value="">Selecione</option>
+                        <option value="Iniciante">Iniciante</option>
+                        <option value="Intermediário">Intermediário</option>
+                        <option value="Avançado">Avançado</option>
+                        <option value="Especialista">Especialista</option>
+                    </select>
+                </div>
+            `;
+            document.getElementById('skillsContainer').appendChild(newSkill);
+        });
+        
+        // Adicionar idioma
+        document.getElementById('addLanguage').addEventListener('click', function() {
+            if (languageCount >= 3) {
+                alert('Para manter o currículo em uma página, limite de 3 idiomas');
+                return;
+            }
+            
+            languageCount++;
+            const newLanguage = document.createElement('div');
+            newLanguage.className = 'skill-item';
+            newLanguage.innerHTML = `
+                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); languageCount--;">Remover</button>
+                <div class="form-group">
+                    <label for="languageName${languageCount}">Idioma*</label>
+                    <input type="text" id="languageName${languageCount}" required maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="languageLevel${languageCount}">Nível*</label>
+                    <select id="languageLevel${languageCount}" required>
+                        <option value="">Selecione</option>
+                        <option value="Básico">Básico</option>
+                        <option value="Intermediário">Intermediário</option>
+                        <option value="Avançado">Avançado</option>
+                        <option value="Fluente">Fluente</option>
+                    </select>
+                </div>
+            `;
+            document.getElementById('languagesContainer').appendChild(newLanguage);
+        });
+        
+        // Gerar PDF
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            // Coletar dados do formulário
+            const resumeData = {
+                personalInfo: {
+                    fullName: document.getElementById('fullName').value,
+                    profession: document.getElementById('profession').value,
+                    photo: photoDataUrl,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    linkedin: document.getElementById('linkedin').value,
+                    portfolio: document.getElementById('portfolio').value,
+                    summary: document.getElementById('summary').value
+                },
+                experiences: [],
+                education: [],
+                skills: [],
+                languages: []
+            };
+            
+            // Coletar experiências
+            for (let i = 1; i <= experienceCount; i++) {
+                const jobTitle = document.getElementById(`jobTitle${i}`);
+                if (jobTitle) {
+                    resumeData.experiences.push({
+                        jobTitle: jobTitle.value,
+                        company: document.getElementById(`company${i}`).value,
+                        period: document.getElementById(`jobPeriod${i}`).value,
+                        description: document.getElementById(`jobDescription${i}`).value
+                    });
+                }
+            }
+            
+            // Coletar formações
+            for (let i = 1; i <= educationCount; i++) {
+                const degree = document.getElementById(`degree${i}`);
+                if (degree) {
+                    resumeData.education.push({
+                        degree: degree.value,
+                        institution: document.getElementById(`institution${i}`).value,
+                        period: document.getElementById(`educationPeriod${i}`).value
+                    });
+                }
+            }
+            
+            // Coletar habilidades
+            for (let i = 1; i <= skillCount; i++) {
+                const skillName = document.getElementById(`skillName${i}`);
+                if (skillName) {
+                    resumeData.skills.push({
+                        name: skillName.value,
+                        level: document.getElementById(`skillLevel${i}`).value
+                    });
+                }
+            }
+            
+            // Coletar idiomas
+            for (let i = 1; i <= languageCount; i++) {
+                const languageName = document.getElementById(`languageName${i}`);
+                if (languageName) {
+                    resumeData.languages.push({
+                        name: languageName.value,
+                        level: document.getElementById(`languageLevel${i}`).value
+                    });
+                }
+            }
+            
+            // Validar dados obrigatórios
+            if (!resumeData.personalInfo.fullName || !resumeData.personalInfo.profession || 
+                !resumeData.personalInfo.email || !resumeData.personalInfo.summary ||
+                resumeData.experiences.length === 0 || resumeData.education.length === 0 ||
+                resumeData.skills.length === 0) {
+                alert('Por favor, preencha todos os campos obrigatórios (*)');
+                return;
+            }
+            
+            // Gerar o PDF em uma página
+            generateOnePagePDF(resumeData);
+        });
+        
+        function generateOnePagePDF(data) {
+            const doc = new jsPDF();
+            const margin = 15;
+            const pageWidth = doc.internal.pageSize.width;
+            const pageHeight = doc.internal.pageSize.height;
+            let yPos = margin;
+            const lineHeight = 6;
+            const sectionGap = 8;
+            
+            // Cores
+            const primaryColor = [41, 128, 185]; // Azul profissional
+            const textColor = [51, 51, 51]; // Texto escuro
+            
+            // Configurações de fonte
+            const setHeaderFont = () => {
+                doc.setFontSize(11);
+                doc.setTextColor(...primaryColor);
+                doc.setFont('helvetica', 'bold');
+            };
+            
+            const setBodyFont = () => {
+                doc.setFontSize(10);
+                doc.setTextColor(...textColor);
+                doc.setFont('helvetica', 'normal');
+            };
+            
+            // Cabeçalho
+            doc.setFontSize(20);
+            doc.setTextColor(...primaryColor);
+            doc.setFont('helvetica', 'bold');
+            doc.text(data.personalInfo.fullName.toUpperCase(), margin, yPos);
+            yPos += lineHeight;
+            
+            doc.setFontSize(12);
+            doc.text(data.personalInfo.profession, margin, yPos);
+            yPos += lineHeight * 1.5;
+            
+            // Foto (se existir)
+            if (data.personalInfo.photo) {
+                try {
+                    const imgProps = doc.getImageProperties(data.personalInfo.photo);
+                    const imgWidth = 25;
+                    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+                    doc.addImage(data.personalInfo.photo, 'JPEG', pageWidth - margin - imgWidth, margin, imgWidth, imgHeight);
+                } catch (e) {
+                    console.error("Erro ao adicionar imagem:", e);
+                }
+            }
+            
+            // Informações de contato
+            doc.setFontSize(9);
+            doc.setTextColor(...textColor);
+            doc.setFont('helvetica', 'normal');
+            
+            let contactInfo = [];
+            if (data.personalInfo.email) contactInfo.push(data.personalInfo.email);
+            if (data.personalInfo.phone) contactInfo.push(data.personalInfo.phone);
+            if (data.personalInfo.linkedin) contactInfo.push(`LinkedIn: ${data.personalInfo.linkedin}`);
+            if (data.personalInfo.portfolio) contactInfo.push(`Portfólio: ${data.personalInfo.portfolio}`);
+            
+            doc.text(contactInfo.join(' | '), margin, yPos, { maxWidth: pageWidth - margin * 2 });
+            yPos += lineHeight * 2;
+            
+            // Linha divisória
+            doc.setDrawColor(...primaryColor);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos, pageWidth - margin, yPos);
+            yPos += sectionGap;
+            
+            // Resumo profissional (limitado a 3 linhas)
+            setHeaderFont();
+            doc.text('RESUMO PROFISSIONAL', margin, yPos);
+            yPos += lineHeight;
+            
+            setBodyFont();
+            const summaryLines = doc.splitTextToSize(data.personalInfo.summary, pageWidth - margin * 2);
+            const limitedSummary = summaryLines.slice(0, 3); // Limitar a 3 linhas
+            doc.text(limitedSummary, margin, yPos);
+            yPos += (limitedSummary.length * lineHeight) + sectionGap;
+            
+            // Experiência profissional (limitado a 3 experiências)
+            setHeaderFont();
+            doc.text('EXPERIÊNCIA PROFISSIONAL', margin, yPos);
+            yPos += lineHeight;
+            
+            setBodyFont();
+            const maxExperiences = Math.min(data.experiences.length, 3); // Limitar a 3 experiências
+            
+            for (let i = 0; i < maxExperiences; i++) {
+                const exp = data.experiences[i];
+                const experienceHeight = estimateExperienceHeight(doc, exp, pageWidth, margin);
+                
+                // Verificar espaço na página
+                if (yPos + experienceHeight > pageHeight - margin) {
+                    break; // Não cabe mais, parar
+                }
+                
+                doc.setFont('helvetica', 'bold');
+                doc.text(`• ${exp.jobTitle}`, margin, yPos);
+                yPos += lineHeight;
+                
+                doc.setFont('helvetica', 'normal');
+                doc.text(`${exp.company} | ${exp.period}`, margin + 5, yPos);
+                yPos += lineHeight;
+                
+                if (exp.description) {
+                    const descLines = doc.splitTextToSize(exp.description, pageWidth - margin * 2 - 5);
+                    const limitedDesc = descLines.slice(0, 2); // Limitar a 2 linhas
+                    doc.text(limitedDesc, margin + 5, yPos);
+                    yPos += (limitedDesc.length * lineHeight);
+                }
+                
+                yPos += sectionGap;
+            }
+            
+            // Formação acadêmica (limitado a 2 formações)
+            setHeaderFont();
+            doc.text('FORMAÇÃO ACADÊMICA', margin, yPos);
+            yPos += lineHeight;
+            
+            setBodyFont();
+            const maxEducation = Math.min(data.education.length, 2); // Limitar a 2 formações
+            
+            for (let i = 0; i < maxEducation; i++) {
+                const edu = data.education[i];
+                const educationHeight = 15; // Altura estimada por formação
+                
+                // Verificar espaço na página
+                if (yPos + educationHeight > pageHeight - margin) {
+                    break; // Não cabe mais, parar
+                }
+                
+                doc.setFont('helvetica', 'bold');
+                doc.text(`• ${edu.degree}`, margin, yPos);
+                yPos += lineHeight;
+                
+                doc.setFont('helvetica', 'normal');
+                const institutionText = `${edu.institution}${edu.period ? ` | ${edu.period}` : ''}`;
+                doc.text(institutionText, margin + 5, yPos);
+                yPos += lineHeight * 1.5;
+            }
+            
+            // Coluna direita para habilidades e idiomas
+            const columnX = pageWidth / 2 + 5;
+            let columnY = margin + lineHeight * 4;
+            
+            // Habilidades (limitado a 5 habilidades)
+            setHeaderFont();
+            doc.text('HABILIDADES TÉCNICAS', columnX, columnY);
+            columnY += lineHeight;
+            
+            setBodyFont();
+            const maxSkills = Math.min(data.skills.length, 5); // Limitar a 5 habilidades
+            
+            for (let i = 0; i < maxSkills; i++) {
+                const skill = data.skills[i];
+                
+                // Verificar espaço na coluna
+                if (columnY + lineHeight > pageHeight - margin) {
+                    break; // Não cabe mais, parar
+                }
+                
+                doc.text(`• ${skill.name}: ${skill.level}`, columnX, columnY);
+                columnY += lineHeight * 1.2;
+            }
+            
+            columnY += sectionGap;
+            
+            // Idiomas (limitado a 3 idiomas)
+            setHeaderFont();
+            doc.text('IDIOMAS', columnX, columnY);
+            columnY += lineHeight;
+            
+            setBodyFont();
+            const maxLanguages = Math.min(data.languages.length, 3); // Limitar a 3 idiomas
+            
+            for (let i = 0; i < maxLanguages; i++) {
+                const lang = data.languages[i];
+                
+                // Verificar espaço na coluna
+                if (columnY + lineHeight > pageHeight - margin) {
+                    break; // Não cabe mais, parar
+                }
+                
+                doc.text(`• ${lang.name}: ${lang.level}`, columnX, columnY);
+                columnY += lineHeight * 1.2;
+            }
+            
+            // Salvar o PDF
+            doc.save(`Curriculo_${data.personalInfo.fullName.replace(/\s+/g, '_')}.pdf`);
+        }
+        
+        // Função para estimar altura necessária para uma experiência
+        function estimateExperienceHeight(doc, experience, pageWidth, margin) {
+            let height = 0;
+            const lineHeight = 6;
+            
+            // Altura do cargo
+            height += lineHeight;
+            
+            // Altura da empresa e período
+            height += lineHeight;
+            
+            // Altura da descrição (limitada a 2 linhas)
+            if (experience.description) {
+                const descLines = doc.splitTextToSize(experience.description, pageWidth - margin * 2 - 5);
+                const limitedDesc = descLines.slice(0, 2);
+                height += limitedDesc.length * lineHeight;
+            }
+            
+            // Espaçamento adicional
+            height += 8;
+            
+            return height;
+        }
+    </script>
+</body>
+</html>
