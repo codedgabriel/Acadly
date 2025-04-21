@@ -3,776 +3,1180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Currículo Compacto</title>
+    <title>Gerador de Currículo Profissional</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body {
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--text-color);
             line-height: 1.6;
-            color: #333;
-            max-width: 800px;
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
         }
-        
-        h1 {
-            color: #2c3e50;
+
+        header {
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        .form-section {
+            margin-bottom: 40px;
+            padding: 20px 0;
             background-color: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
-        
-        .form-section h2 {
-            color: #3498db;
-            margin-top: 0;
-            font-size: 18px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-        }
-        
-        .form-group {
-            margin-bottom: 12px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 4px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="file"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        
-        textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: block;
-            margin: 15px auto;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #2980b9;
-        }
-        
-        .add-btn {
-            background-color: #27ae60;
-            padding: 6px 12px;
-            font-size: 13px;
+
+        h1 {
+            color: var(--primary-color);
             margin-bottom: 10px;
         }
-        
-        .remove-btn {
-            background-color: #e74c3c;
-            padding: 6px 12px;
-            font-size: 13px;
-            margin-left: 8px;
+
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            height: 10px;
+            overflow: hidden;
         }
-        
-        .experience-item,
-        .education-item,
-        .skill-item {
-            background-color: #f9f9f9;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 12px;
-            position: relative;
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: var(--transition);
         }
-        
-        #photoPreview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #3498db;
-            display: block;
-            margin: 10px auto;
-        }
-        
-        .two-columns {
+
+        .form-container {
             display: flex;
-            gap: 15px;
+            flex-direction: column;
+            gap: 30px;
         }
-        
-        .two-columns > div {
-            flex: 1;
+
+        .form-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: none;
         }
-        
-        .char-counter {
-            font-size: 12px;
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .add-btn {
+            background-color: #2ecc71;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .remove-btn {
+            background-color: var(--accent-color);
+            margin-left: 10px;
+        }
+
+        .remove-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .dynamic-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+        }
+
+        .dynamic-item-content {
+            flex-grow: 1;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .skill-tag .remove-skill {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #resume-preview {
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: 40px;
+            display: none;
+        }
+
+        .resume-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-color);
+            gap: 40px;
+        }
+
+        .profile-image-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .resume-header-content {
+            flex-grow: 1;
+        }
+
+        .resume-name {
+            font-size: 32px;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .resume-title {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .resume-contact {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .resume-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title-resume {
+            color: var(--primary-color);
+            font-size: 22px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--light-color);
+        }
+
+        .resume-item {
+            margin-bottom: 20px;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .item-date {
             color: #7f8c8d;
-            text-align: right;
-            margin-top: 2px;
         }
-        
-        @media (max-width: 600px) {
-            .two-columns {
+
+        .item-subtitle {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-item {
+            background-color: var(--light-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .no-print {
+            display: none;
+        }
+
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .image-upload-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            margin-bottom: 10px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .image-upload-label:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #image-upload {
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .resume-header {
                 flex-direction: column;
-                gap: 0;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .resume-contact {
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Gerador de Currículo Compacto</h1>
-    
-    <form id="resumeForm">
-        <div class="two-columns">
-            <div>
-                <!-- Informações Pessoais -->
-                <div class="form-section">
-                    <h2>Informações Pessoais</h2>
-                    <div class="form-group">
-                        <label for="fullName">Nome Completo*</label>
-                        <input type="text" id="fullName" required maxlength="50">
-                        <div class="char-counter"><span id="nameCounter">0</span>/50</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="profession">Cargo/Profissão*</label>
-                        <input type="text" id="profession" required maxlength="40">
-                        <div class="char-counter"><span id="professionCounter">0</span>/40</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="photo">Foto (opcional)</label>
-                        <input type="file" id="photo" accept="image/*">
-                        <img id="photoPreview" src="" alt="Pré-visualização da foto" style="display: none;">
-                    </div>
+    <div class="container">
+        <header>
+            <h1>Gerador de Currículo Profissional</h1>
+            <p>Preencha os campos abaixo para criar seu currículo perfeito</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </header>
+
+        <form id="resume-form" class="form-container">
+            <!-- Informações Pessoais -->
+            <div class="form-section active" id="section-personal">
+                <h2 class="section-title">Informações Pessoais</h2>
+                
+                <div class="image-upload-container">
+                    <label for="image-upload" class="image-upload-label">Adicionar Foto do Perfil</label>
+                    <input type="file" id="image-upload" accept="image/*">
+                    <img id="preview-image" class="preview-image" alt="Preview da imagem">
+                    <button type="button" class="btn remove-btn" id="remove-image" style="display: none;">Remover Imagem</button>
                 </div>
                 
-                <!-- Contato -->
-                <div class="form-section">
-                    <h2>Contato</h2>
+                <div class="form-grid">
                     <div class="form-group">
-                        <label for="email">E-mail*</label>
-                        <input type="email" id="email" required maxlength="50">
+                        <label for="full-name">Nome Completo*</label>
+                        <input type="text" id="full-name" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Telefone</label>
-                        <input type="tel" id="phone" maxlength="20">
+                        <label for="profession">Profissão/Cargo Desejado*</label>
+                        <input type="text" id="profession" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail*</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone*</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Endereço</label>
+                        <input type="text" id="address">
                     </div>
                     <div class="form-group">
                         <label for="linkedin">LinkedIn</label>
-                        <input type="text" id="linkedin" maxlength="50">
+                        <input type="url" id="linkedin">
                     </div>
                     <div class="form-group">
-                        <label for="portfolio">Portfólio/Site</label>
-                        <input type="text" id="portfolio" maxlength="50">
+                        <label for="github">GitHub</label>
+                        <input type="url" id="github">
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio">Portfólio</label>
+                        <input type="url" id="portfolio">
                     </div>
                 </div>
-                
-                <!-- Habilidades -->
-                <div class="form-section">
-                    <h2>Habilidades Técnicas (3-5 principais)</h2>
-                    <div id="skillsContainer">
-                        <div class="skill-item">
-                            <div class="form-group">
-                                <label for="skillName1">Habilidade*</label>
-                                <input type="text" id="skillName1" required maxlength="30">
-                            </div>
-                            <div class="form-group">
-                                <label for="skillLevel1">Nível*</label>
-                                <select id="skillLevel1" required>
-                                    <option value="">Selecione</option>
-                                    <option value="Iniciante">Iniciante</option>
-                                    <option value="Intermediário">Intermediário</option>
-                                    <option value="Avançado">Avançado</option>
-                                    <option value="Especialista">Especialista</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" class="add-btn" id="addSkill">+ Adicionar Habilidade</button>
+                <div class="form-group">
+                    <label for="about">Sobre Você*</label>
+                    <textarea id="about" required></textarea>
+                    <small>Uma breve descrição sobre você e seus objetivos profissionais</small>
+                </div>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-secondary" disabled>Anterior</button>
+                    <button type="button" class="btn" onclick="nextSection('section-personal', 'section-education')">Próximo</button>
                 </div>
             </div>
-            
-            <div>
-                <!-- Experiência Profissional -->
-                <div class="form-section">
-                    <h2>Experiência Profissional (últimos 3 empregos)</h2>
-                    <div id="experienceContainer">
-                        <div class="experience-item">
-                            <div class="form-group">
-                                <label for="jobTitle1">Cargo*</label>
-                                <input type="text" id="jobTitle1" required maxlength="40">
-                            </div>
-                            <div class="form-group">
-                                <label for="company1">Empresa*</label>
-                                <input type="text" id="company1" required maxlength="30">
-                            </div>
-                            <div class="form-group">
-                                <label for="jobPeriod1">Período*</label>
-                                <input type="text" id="jobPeriod1" placeholder="MM/AAAA - MM/AAAA" required maxlength="20">
-                            </div>
-                            <div class="form-group">
-                                <label for="jobDescription1">Realizações (1-2 frases)*</label>
-                                <textarea id="jobDescription1" required maxlength="200"></textarea>
-                                <div class="char-counter"><span id="jobDescCounter1">0</span>/200</div>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" class="add-btn" id="addExperience">+ Adicionar Experiência</button>
-                </div>
-                
-                <!-- Formação Acadêmica -->
-                <div class="form-section">
-                    <h2>Formação Acadêmica</h2>
-                    <div id="educationContainer">
-                        <div class="education-item">
-                            <div class="form-group">
-                                <label for="degree1">Curso*</label>
-                                <input type="text" id="degree1" required maxlength="40">
-                            </div>
-                            <div class="form-group">
-                                <label for="institution1">Instituição*</label>
-                                <input type="text" id="institution1" required maxlength="30">
-                            </div>
-                            <div class="form-group">
-                                <label for="educationPeriod1">Período</label>
-                                <input type="text" id="educationPeriod1" placeholder="MM/AAAA - MM/AAAA" maxlength="20">
+
+            <!-- Formação Acadêmica -->
+            <div class="form-section" id="section-education">
+                <h2 class="section-title">Formação Acadêmica</h2>
+                <div id="education-container">
+                    <div class="dynamic-item">
+                        <div class="dynamic-item-content">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="education-degree-0">Grau*</label>
+                                    <select id="education-degree-0" required>
+                                        <option value="">Selecione</option>
+                                        <option value="Ensino Médio">Ensino Médio</option>
+                                        <option value="Técnico">Técnico</option>
+                                        <option value="Graduação">Graduação</option>
+                                        <option value="Pós-Graduação">Pós-Graduação</option>
+                                        <option value="Mestrado">Mestrado</option>
+                                        <option value="Doutorado">Doutorado</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="education-field-0">Área de Estudo*</label>
+                                    <input type="text" id="education-field-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="education-institution-0">Instituição*</label>
+                                    <input type="text" id="education-institution-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="education-start-0">Ano de Início*</label>
+                                    <input type="number" id="education-start-0" min="1900" max="2099" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="education-end-0">Ano de Conclusão*</label>
+                                    <input type="number" id="education-end-0" min="1900" max="2099" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="education-description-0">Descrição</label>
+                                    <textarea id="education-description-0"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="add-btn" id="addEducation">+ Adicionar Formação</button>
                 </div>
-                
-                <!-- Idiomas -->
-                <div class="form-section">
-                    <h2>Idiomas</h2>
-                    <div id="languagesContainer">
-                        <div class="skill-item">
-                            <div class="form-group">
-                                <label for="languageName1">Idioma*</label>
-                                <input type="text" id="languageName1" required maxlength="20">
-                            </div>
-                            <div class="form-group">
-                                <label for="languageLevel1">Nível*</label>
-                                <select id="languageLevel1" required>
-                                    <option value="">Selecione</option>
-                                    <option value="Básico">Básico</option>
-                                    <option value="Intermediário">Intermediário</option>
-                                    <option value="Avançado">Avançado</option>
-                                    <option value="Fluente">Fluente</option>
-                                </select>
+                <button type="button" class="btn add-btn" onclick="addEducation()">Adicionar Formação</button>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection('section-education', 'section-personal')">Anterior</button>
+                    <button type="button" class="btn" onclick="nextSection('section-education', 'section-experience')">Próximo</button>
+                </div>
+            </div>
+
+            <!-- Experiência Profissional -->
+            <div class="form-section" id="section-experience">
+                <h2 class="section-title">Experiência Profissional</h2>
+                <div id="experience-container">
+                    <div class="dynamic-item">
+                        <div class="dynamic-item-content">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="experience-position-0">Cargo*</label>
+                                    <input type="text" id="experience-position-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience-company-0">Empresa*</label>
+                                    <input type="text" id="experience-company-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience-start-0">Data de Início*</label>
+                                    <input type="month" id="experience-start-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience-end-0">Data de Término</label>
+                                    <input type="month" id="experience-end-0">
+                                    <small>Deixe em branco se for o emprego atual</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience-description-0">Descrição das Atividades*</label>
+                                    <textarea id="experience-description-0" required></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="add-btn" id="addLanguage">+ Adicionar Idioma</button>
                 </div>
+                <button type="button" class="btn add-btn" onclick="addExperience()">Adicionar Experiência</button>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection('section-experience', 'section-education')">Anterior</button>
+                    <button type="button" class="btn" onclick="nextSection('section-experience', 'section-skills')">Próximo</button>
+                </div>
+            </div>
+
+            <!-- Habilidades -->
+            <div class="form-section" id="section-skills">
+                <h2 class="section-title">Habilidades</h2>
+                <div class="form-group">
+                    <label for="skill-input">Adicionar Habilidade</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="skill-input" placeholder="Ex: JavaScript, Photoshop, Gestão de Projetos">
+                        <button type="button" class="btn add-btn" onclick="addSkill()">Adicionar</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Suas Habilidades:</label>
+                    <div class="skills-container" id="skills-container">
+                        <!-- Skills will be added here -->
+                    </div>
+                </div>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection('section-skills', 'section-experience')">Anterior</button>
+                    <button type="button" class="btn" onclick="nextSection('section-skills', 'section-languages')">Próximo</button>
+                </div>
+            </div>
+
+            <!-- Idiomas -->
+            <div class="form-section" id="section-languages">
+                <h2 class="section-title">Idiomas</h2>
+                <div id="languages-container">
+                    <div class="dynamic-item">
+                        <div class="dynamic-item-content">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="language-name-0">Idioma*</label>
+                                    <input type="text" id="language-name-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="language-level-0">Nível*</label>
+                                    <select id="language-level-0" required>
+                                        <option value="">Selecione</option>
+                                        <option value="Básico">Básico</option>
+                                        <option value="Intermediário">Intermediário</option>
+                                        <option value="Avançado">Avançado</option>
+                                        <option value="Fluente">Fluente</option>
+                                        <option value="Nativo">Nativo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn add-btn" onclick="addLanguage()">Adicionar Idioma</button>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection('section-languages', 'section-skills')">Anterior</button>
+                    <button type="button" class="btn" onclick="nextSection('section-languages', 'section-projects')">Próximo</button>
+                </div>
+            </div>
+
+            <!-- Projetos -->
+            <div class="form-section" id="section-projects">
+                <h2 class="section-title">Projetos Relevantes</h2>
+                <div id="projects-container">
+                    <div class="dynamic-item">
+                        <div class="dynamic-item-content">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="project-name-0">Nome do Projeto*</label>
+                                    <input type="text" id="project-name-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="project-role-0">Seu Papel no Projeto*</label>
+                                    <input type="text" id="project-role-0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="project-date-0">Data do Projeto</label>
+                                    <input type="month" id="project-date-0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="project-description-0">Descrição do Projeto*</label>
+                                    <textarea id="project-description-0" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="project-url-0">URL (se aplicável)</label>
+                                    <input type="url" id="project-url-0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn add-btn" onclick="addProject()">Adicionar Projeto</button>
+                <div class="navigation-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="prevSection('section-projects', 'section-languages')">Anterior</button>
+                    <button type="button" class="btn" onclick="generateResume()">Gerar Currículo</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Preview do Currículo -->
+        <div id="resume-preview">
+            <div class="resume-header">
+                <div class="profile-image-container" id="profile-image-container">
+                    <img id="resume-profile-image" class="profile-image" src="" alt="Foto do perfil" style="display: none;">
+                </div>
+                <div class="resume-header-content">
+                    <h1 class="resume-name" id="resume-name">Nome Completo</h1>
+                    <h2 class="resume-title" id="resume-title">Profissão/Cargo Desejado</h2>
+                    <div class="resume-contact">
+                        <span id="resume-phone">Telefone</span>
+                        <span id="resume-email">E-mail</span>
+                        <span id="resume-address">Endereço</span>
+                    </div>
+                    <div class="resume-contact">
+                        <span id="resume-linkedin">LinkedIn</span>
+                        <span id="resume-github">GitHub</span>
+                        <span id="resume-portfolio">Portfólio</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resume-section">
+                <h3 class="section-title-resume">Sobre</h3>
+                <p id="resume-about">Descrição sobre você e seus objetivos profissionais.</p>
+            </div>
+
+            <div class="resume-section" id="resume-education-section">
+                <h3 class="section-title-resume">Formação Acadêmica</h3>
+                <!-- Education items will be added here -->
+            </div>
+
+            <div class="resume-section" id="resume-experience-section">
+                <h3 class="section-title-resume">Experiência Profissional</h3>
+                <!-- Experience items will be added here -->
+            </div>
+
+            <div class="resume-section" id="resume-skills-section">
+                <h3 class="section-title-resume">Habilidades</h3>
+                <div class="skills-list" id="resume-skills-list">
+                    <!-- Skills will be added here -->
+                </div>
+            </div>
+
+            <div class="resume-section" id="resume-languages-section">
+                <h3 class="section-title-resume">Idiomas</h3>
+                <!-- Languages will be added here -->
+            </div>
+
+            <div class="resume-section" id="resume-projects-section">
+                <h3 class="section-title-resume">Projetos Relevantes</h3>
+                <!-- Projects will be added here -->
+            </div>
+
+            <div class="actions no-print">
+                <button class="btn btn-secondary" onclick="backToForm()">Voltar ao Formulário</button>
+                <button class="btn btn-danger" onclick="generatePDF()">Baixar como PDF</button>
             </div>
         </div>
-        
-        <!-- Resumo -->
-        <div class="form-section">
-            <h2>Resumo Profissional (máx. 250 caracteres)</h2>
-            <div class="form-group">
-                <textarea id="summary" required maxlength="250" placeholder="Destaque suas principais qualificações e objetivos profissionais de forma concisa"></textarea>
-                <div class="char-counter"><span id="summaryCounter">0</span>/250</div>
-            </div>
-        </div>
-        
-        <button type="button" id="generateBtn">Gerar Currículo em PDF (1 Página)</button>
-    </form>
+    </div>
 
     <script>
-        // Configuração do jsPDF
-        const { jsPDF } = window.jspdf;
-        
-        // Variáveis globais
-        let experienceCount = 1;
-        let educationCount = 1;
-        let skillCount = 1;
-        let languageCount = 1;
-        let photoDataUrl = '';
-        
-        // Inicializar contadores de caracteres
+        // Wait for the DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Contadores de caracteres
-            document.getElementById('fullName').addEventListener('input', function() {
-                document.getElementById('nameCounter').textContent = this.value.length;
+            // Initialize counters for dynamic fields
+            window.educationCount = 1;
+            window.experienceCount = 1;
+            window.languageCount = 1;
+            window.projectCount = 1;
+            window.skills = [];
+            
+            // Initialize the progress bar
+            updateProgressBar();
+            
+            // Set up image upload
+            setupImageUpload();
+        });
+
+        // Image upload functionality
+        function setupImageUpload() {
+            const imageUpload = document.getElementById('image-upload');
+            const previewImage = document.getElementById('preview-image');
+            const removeImageBtn = document.getElementById('remove-image');
+            const resumeProfileImage = document.getElementById('resume-profile-image');
+            
+            imageUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        previewImage.src = event.target.result;
+                        previewImage.style.display = 'block';
+                        removeImageBtn.style.display = 'block';
+                        
+                        // Also set the resume preview image
+                        resumeProfileImage.src = event.target.result;
+                        resumeProfileImage.style.display = 'block';
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
             });
             
-            document.getElementById('profession').addEventListener('input', function() {
-                document.getElementById('professionCounter').textContent = this.value.length;
+            removeImageBtn.addEventListener('click', function() {
+                imageUpload.value = '';
+                previewImage.src = '';
+                previewImage.style.display = 'none';
+                removeImageBtn.style.display = 'none';
+                resumeProfileImage.src = '';
+                resumeProfileImage.style.display = 'none';
             });
-            
-            document.getElementById('summary').addEventListener('input', function() {
-                document.getElementById('summaryCounter').textContent = this.value.length;
-            });
-            
-            document.getElementById('jobDescription1').addEventListener('input', function() {
-                document.getElementById('jobDescCounter1').textContent = this.value.length;
-            });
-        });
-        
-        // Pré-visualizar foto
-        document.getElementById('photo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && file.size < 500000) { // Limite de 500KB
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    photoDataUrl = event.target.result;
-                    const preview = document.getElementById('photoPreview');
-                    preview.src = photoDataUrl;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else if (file) {
-                alert('Por favor, selecione uma imagem menor que 500KB');
-                this.value = '';
-            }
-        });
-        
-        // Adicionar experiência profissional
-        document.getElementById('addExperience').addEventListener('click', function() {
-            if (experienceCount >= 3) {
-                alert('Para manter o currículo em uma página, limite de 3 experiências');
-                return;
-            }
-            
-            experienceCount++;
-            const newExperience = document.createElement('div');
-            newExperience.className = 'experience-item';
-            newExperience.innerHTML = `
-                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); experienceCount--;">Remover</button>
-                <div class="form-group">
-                    <label for="jobTitle${experienceCount}">Cargo*</label>
-                    <input type="text" id="jobTitle${experienceCount}" required maxlength="40">
-                </div>
-                <div class="form-group">
-                    <label for="company${experienceCount}">Empresa*</label>
-                    <input type="text" id="company${experienceCount}" required maxlength="30">
-                </div>
-                <div class="form-group">
-                    <label for="jobPeriod${experienceCount}">Período*</label>
-                    <input type="text" id="jobPeriod${experienceCount}" placeholder="MM/AAAA - MM/AAAA" required maxlength="20">
-                </div>
-                <div class="form-group">
-                    <label for="jobDescription${experienceCount}">Realizações (1-2 frases)*</label>
-                    <textarea id="jobDescription${experienceCount}" required maxlength="200"></textarea>
-                    <div class="char-counter"><span id="jobDescCounter${experienceCount}">0</span>/200</div>
-                </div>
-            `;
-            document.getElementById('experienceContainer').appendChild(newExperience);
-            
-            // Adicionar contador de caracteres para a nova descrição
-            document.getElementById(`jobDescription${experienceCount}`).addEventListener('input', function() {
-                document.getElementById(`jobDescCounter${experienceCount}`).textContent = this.value.length;
-            });
-        });
-        
-        // Adicionar formação acadêmica
-        document.getElementById('addEducation').addEventListener('click', function() {
-            if (educationCount >= 2) {
-                alert('Para manter o currículo em uma página, limite de 2 formações');
-                return;
-            }
-            
-            educationCount++;
-            const newEducation = document.createElement('div');
-            newEducation.className = 'education-item';
-            newEducation.innerHTML = `
-                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); educationCount--;">Remover</button>
-                <div class="form-group">
-                    <label for="degree${educationCount}">Curso*</label>
-                    <input type="text" id="degree${educationCount}" required maxlength="40">
-                </div>
-                <div class="form-group">
-                    <label for="institution${educationCount}">Instituição*</label>
-                    <input type="text" id="institution${educationCount}" required maxlength="30">
-                </div>
-                <div class="form-group">
-                    <label for="educationPeriod${educationCount}">Período</label>
-                    <input type="text" id="educationPeriod${educationCount}" placeholder="MM/AAAA - MM/AAAA" maxlength="20">
-                </div>
-            `;
-            document.getElementById('educationContainer').appendChild(newEducation);
-        });
-        
-        // Adicionar habilidade
-        document.getElementById('addSkill').addEventListener('click', function() {
-            if (skillCount >= 5) {
-                alert('Para manter o currículo em uma página, limite de 5 habilidades');
-                return;
-            }
-            
-            skillCount++;
-            const newSkill = document.createElement('div');
-            newSkill.className = 'skill-item';
-            newSkill.innerHTML = `
-                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); skillCount--;">Remover</button>
-                <div class="form-group">
-                    <label for="skillName${skillCount}">Habilidade*</label>
-                    <input type="text" id="skillName${skillCount}" required maxlength="30">
-                </div>
-                <div class="form-group">
-                    <label for="skillLevel${skillCount}">Nível*</label>
-                    <select id="skillLevel${skillCount}" required>
-                        <option value="">Selecione</option>
-                        <option value="Iniciante">Iniciante</option>
-                        <option value="Intermediário">Intermediário</option>
-                        <option value="Avançado">Avançado</option>
-                        <option value="Especialista">Especialista</option>
-                    </select>
-                </div>
-            `;
-            document.getElementById('skillsContainer').appendChild(newSkill);
-        });
-        
-        // Adicionar idioma
-        document.getElementById('addLanguage').addEventListener('click', function() {
-            if (languageCount >= 3) {
-                alert('Para manter o currículo em uma página, limite de 3 idiomas');
-                return;
-            }
-            
-            languageCount++;
-            const newLanguage = document.createElement('div');
-            newLanguage.className = 'skill-item';
-            newLanguage.innerHTML = `
-                <button type="button" class="remove-btn" onclick="this.parentNode.remove(); languageCount--;">Remover</button>
-                <div class="form-group">
-                    <label for="languageName${languageCount}">Idioma*</label>
-                    <input type="text" id="languageName${languageCount}" required maxlength="20">
-                </div>
-                <div class="form-group">
-                    <label for="languageLevel${languageCount}">Nível*</label>
-                    <select id="languageLevel${languageCount}" required>
-                        <option value="">Selecione</option>
-                        <option value="Básico">Básico</option>
-                        <option value="Intermediário">Intermediário</option>
-                        <option value="Avançado">Avançado</option>
-                        <option value="Fluente">Fluente</option>
-                    </select>
-                </div>
-            `;
-            document.getElementById('languagesContainer').appendChild(newLanguage);
-        });
-        
-        // Gerar PDF
-        document.getElementById('generateBtn').addEventListener('click', function() {
-            // Coletar dados do formulário
-            const resumeData = {
-                personalInfo: {
-                    fullName: document.getElementById('fullName').value,
-                    profession: document.getElementById('profession').value,
-                    photo: photoDataUrl,
-                    email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
-                    linkedin: document.getElementById('linkedin').value,
-                    portfolio: document.getElementById('portfolio').value,
-                    summary: document.getElementById('summary').value
-                },
-                experiences: [],
-                education: [],
-                skills: [],
-                languages: []
-            };
-            
-            // Coletar experiências
-            for (let i = 1; i <= experienceCount; i++) {
-                const jobTitle = document.getElementById(`jobTitle${i}`);
-                if (jobTitle) {
-                    resumeData.experiences.push({
-                        jobTitle: jobTitle.value,
-                        company: document.getElementById(`company${i}`).value,
-                        period: document.getElementById(`jobPeriod${i}`).value,
-                        description: document.getElementById(`jobDescription${i}`).value
-                    });
-                }
-            }
-            
-            // Coletar formações
-            for (let i = 1; i <= educationCount; i++) {
-                const degree = document.getElementById(`degree${i}`);
-                if (degree) {
-                    resumeData.education.push({
-                        degree: degree.value,
-                        institution: document.getElementById(`institution${i}`).value,
-                        period: document.getElementById(`educationPeriod${i}`).value
-                    });
-                }
-            }
-            
-            // Coletar habilidades
-            for (let i = 1; i <= skillCount; i++) {
-                const skillName = document.getElementById(`skillName${i}`);
-                if (skillName) {
-                    resumeData.skills.push({
-                        name: skillName.value,
-                        level: document.getElementById(`skillLevel${i}`).value
-                    });
-                }
-            }
-            
-            // Coletar idiomas
-            for (let i = 1; i <= languageCount; i++) {
-                const languageName = document.getElementById(`languageName${i}`);
-                if (languageName) {
-                    resumeData.languages.push({
-                        name: languageName.value,
-                        level: document.getElementById(`languageLevel${i}`).value
-                    });
-                }
-            }
-            
-            // Validar dados obrigatórios
-            if (!resumeData.personalInfo.fullName || !resumeData.personalInfo.profession || 
-                !resumeData.personalInfo.email || !resumeData.personalInfo.summary ||
-                resumeData.experiences.length === 0 || resumeData.education.length === 0 ||
-                resumeData.skills.length === 0) {
-                alert('Por favor, preencha todos os campos obrigatórios (*)');
-                return;
-            }
-            
-            // Gerar o PDF em uma página
-            generateOnePagePDF(resumeData);
-        });
-        
-        function generateOnePagePDF(data) {
-            const doc = new jsPDF();
-            const margin = 15;
-            const pageWidth = doc.internal.pageSize.width;
-            const pageHeight = doc.internal.pageSize.height;
-            let yPos = margin;
-            const lineHeight = 6;
-            const sectionGap = 8;
-            
-            // Cores
-            const primaryColor = [41, 128, 185]; // Azul profissional
-            const textColor = [51, 51, 51]; // Texto escuro
-            
-            // Configurações de fonte
-            const setHeaderFont = () => {
-                doc.setFontSize(11);
-                doc.setTextColor(...primaryColor);
-                doc.setFont('helvetica', 'bold');
-            };
-            
-            const setBodyFont = () => {
-                doc.setFontSize(10);
-                doc.setTextColor(...textColor);
-                doc.setFont('helvetica', 'normal');
-            };
-            
-            // Cabeçalho
-            doc.setFontSize(20);
-            doc.setTextColor(...primaryColor);
-            doc.setFont('helvetica', 'bold');
-            doc.text(data.personalInfo.fullName.toUpperCase(), margin, yPos);
-            yPos += lineHeight;
-            
-            doc.setFontSize(12);
-            doc.text(data.personalInfo.profession, margin, yPos);
-            yPos += lineHeight * 1.5;
-            
-            // Foto (se existir)
-            if (data.personalInfo.photo) {
-                try {
-                    const imgProps = doc.getImageProperties(data.personalInfo.photo);
-                    const imgWidth = 25;
-                    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-                    doc.addImage(data.personalInfo.photo, 'JPEG', pageWidth - margin - imgWidth, margin, imgWidth, imgHeight);
-                } catch (e) {
-                    console.error("Erro ao adicionar imagem:", e);
-                }
-            }
-            
-            // Informações de contato
-            doc.setFontSize(9);
-            doc.setTextColor(...textColor);
-            doc.setFont('helvetica', 'normal');
-            
-            let contactInfo = [];
-            if (data.personalInfo.email) contactInfo.push(data.personalInfo.email);
-            if (data.personalInfo.phone) contactInfo.push(data.personalInfo.phone);
-            if (data.personalInfo.linkedin) contactInfo.push(`LinkedIn: ${data.personalInfo.linkedin}`);
-            if (data.personalInfo.portfolio) contactInfo.push(`Portfólio: ${data.personalInfo.portfolio}`);
-            
-            doc.text(contactInfo.join(' | '), margin, yPos, { maxWidth: pageWidth - margin * 2 });
-            yPos += lineHeight * 2;
-            
-            // Linha divisória
-            doc.setDrawColor(...primaryColor);
-            doc.setLineWidth(0.5);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += sectionGap;
-            
-            // Resumo profissional (limitado a 3 linhas)
-            setHeaderFont();
-            doc.text('RESUMO PROFISSIONAL', margin, yPos);
-            yPos += lineHeight;
-            
-            setBodyFont();
-            const summaryLines = doc.splitTextToSize(data.personalInfo.summary, pageWidth - margin * 2);
-            const limitedSummary = summaryLines.slice(0, 3); // Limitar a 3 linhas
-            doc.text(limitedSummary, margin, yPos);
-            yPos += (limitedSummary.length * lineHeight) + sectionGap;
-            
-            // Experiência profissional (limitado a 3 experiências)
-            setHeaderFont();
-            doc.text('EXPERIÊNCIA PROFISSIONAL', margin, yPos);
-            yPos += lineHeight;
-            
-            setBodyFont();
-            const maxExperiences = Math.min(data.experiences.length, 3); // Limitar a 3 experiências
-            
-            for (let i = 0; i < maxExperiences; i++) {
-                const exp = data.experiences[i];
-                const experienceHeight = estimateExperienceHeight(doc, exp, pageWidth, margin);
-                
-                // Verificar espaço na página
-                if (yPos + experienceHeight > pageHeight - margin) {
-                    break; // Não cabe mais, parar
-                }
-                
-                doc.setFont('helvetica', 'bold');
-                doc.text(`• ${exp.jobTitle}`, margin, yPos);
-                yPos += lineHeight;
-                
-                doc.setFont('helvetica', 'normal');
-                doc.text(`${exp.company} | ${exp.period}`, margin + 5, yPos);
-                yPos += lineHeight;
-                
-                if (exp.description) {
-                    const descLines = doc.splitTextToSize(exp.description, pageWidth - margin * 2 - 5);
-                    const limitedDesc = descLines.slice(0, 2); // Limitar a 2 linhas
-                    doc.text(limitedDesc, margin + 5, yPos);
-                    yPos += (limitedDesc.length * lineHeight);
-                }
-                
-                yPos += sectionGap;
-            }
-            
-            // Formação acadêmica (limitado a 2 formações)
-            setHeaderFont();
-            doc.text('FORMAÇÃO ACADÊMICA', margin, yPos);
-            yPos += lineHeight;
-            
-            setBodyFont();
-            const maxEducation = Math.min(data.education.length, 2); // Limitar a 2 formações
-            
-            for (let i = 0; i < maxEducation; i++) {
-                const edu = data.education[i];
-                const educationHeight = 15; // Altura estimada por formação
-                
-                // Verificar espaço na página
-                if (yPos + educationHeight > pageHeight - margin) {
-                    break; // Não cabe mais, parar
-                }
-                
-                doc.setFont('helvetica', 'bold');
-                doc.text(`• ${edu.degree}`, margin, yPos);
-                yPos += lineHeight;
-                
-                doc.setFont('helvetica', 'normal');
-                const institutionText = `${edu.institution}${edu.period ? ` | ${edu.period}` : ''}`;
-                doc.text(institutionText, margin + 5, yPos);
-                yPos += lineHeight * 1.5;
-            }
-            
-            // Coluna direita para habilidades e idiomas
-            const columnX = pageWidth / 2 + 5;
-            let columnY = margin + lineHeight * 4;
-            
-            // Habilidades (limitado a 5 habilidades)
-            setHeaderFont();
-            doc.text('HABILIDADES TÉCNICAS', columnX, columnY);
-            columnY += lineHeight;
-            
-            setBodyFont();
-            const maxSkills = Math.min(data.skills.length, 5); // Limitar a 5 habilidades
-            
-            for (let i = 0; i < maxSkills; i++) {
-                const skill = data.skills[i];
-                
-                // Verificar espaço na coluna
-                if (columnY + lineHeight > pageHeight - margin) {
-                    break; // Não cabe mais, parar
-                }
-                
-                doc.text(`• ${skill.name}: ${skill.level}`, columnX, columnY);
-                columnY += lineHeight * 1.2;
-            }
-            
-            columnY += sectionGap;
-            
-            // Idiomas (limitado a 3 idiomas)
-            setHeaderFont();
-            doc.text('IDIOMAS', columnX, columnY);
-            columnY += lineHeight;
-            
-            setBodyFont();
-            const maxLanguages = Math.min(data.languages.length, 3); // Limitar a 3 idiomas
-            
-            for (let i = 0; i < maxLanguages; i++) {
-                const lang = data.languages[i];
-                
-                // Verificar espaço na coluna
-                if (columnY + lineHeight > pageHeight - margin) {
-                    break; // Não cabe mais, parar
-                }
-                
-                doc.text(`• ${lang.name}: ${lang.level}`, columnX, columnY);
-                columnY += lineHeight * 1.2;
-            }
-            
-            // Salvar o PDF
-            doc.save(`Curriculo_${data.personalInfo.fullName.replace(/\s+/g, '_')}.pdf`);
         }
-        
-        // Função para estimar altura necessária para uma experiência
-        function estimateExperienceHeight(doc, experience, pageWidth, margin) {
-            let height = 0;
-            const lineHeight = 6;
+
+        // Navigation functions
+        function nextSection(currentId, nextId) {
+            // Validate current section before proceeding
+            if (validateSection(currentId)) {
+                document.getElementById(currentId).classList.remove('active');
+                document.getElementById(nextId).classList.add('active');
+                updateProgressBar();
+            }
+        }
+
+        function prevSection(currentId, prevId) {
+            document.getElementById(currentId).classList.remove('active');
+            document.getElementById(prevId).classList.add('active');
+            updateProgressBar();
+        }
+
+        function validateSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
+            let isValid = true;
             
-            // Altura do cargo
-            height += lineHeight;
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.style.borderColor = 'red';
+                    isValid = false;
+                } else {
+                    input.style.borderColor = '#ddd';
+                }
+            });
             
-            // Altura da empresa e período
-            height += lineHeight;
-            
-            // Altura da descrição (limitada a 2 linhas)
-            if (experience.description) {
-                const descLines = doc.splitTextToSize(experience.description, pageWidth - margin * 2 - 5);
-                const limitedDesc = descLines.slice(0, 2);
-                height += limitedDesc.length * lineHeight;
+            if (!isValid) {
+                alert('Por favor, preencha todos os campos obrigatórios marcados com *');
             }
             
-            // Espaçamento adicional
-            height += 8;
+            return isValid;
+        }
+
+        function updateProgressBar() {
+            const sections = document.querySelectorAll('.form-section');
+            const activeSection = document.querySelector('.form-section.active');
+            const activeIndex = Array.from(sections).indexOf(activeSection);
+            const progress = (activeIndex / (sections.length - 1)) * 100;
             
-            return height;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        // Dynamic field functions
+        function addEducation() {
+            const container = document.getElementById('education-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-item';
+            newItem.innerHTML = `
+                <div class="dynamic-item-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="education-degree-${educationCount}">Grau*</label>
+                            <select id="education-degree-${educationCount}" required>
+                                <option value="">Selecione</option>
+                                <option value="Ensino Médio">Ensino Médio</option>
+                                <option value="Técnico">Técnico</option>
+                                <option value="Graduação">Graduação</option>
+                                <option value="Pós-Graduação">Pós-Graduação</option>
+                                <option value="Mestrado">Mestrado</option>
+                                <option value="Doutorado">Doutorado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="education-field-${educationCount}">Área de Estudo*</label>
+                            <input type="text" id="education-field-${educationCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="education-institution-${educationCount}">Instituição*</label>
+                            <input type="text" id="education-institution-${educationCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="education-start-${educationCount}">Ano de Início*</label>
+                            <input type="number" id="education-start-${educationCount}" min="1900" max="2099" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="education-end-${educationCount}">Ano de Conclusão*</label>
+                            <input type="number" id="education-end-${educationCount}" min="1900" max="2099" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="education-description-${educationCount}">Descrição</label>
+                            <textarea id="education-description-${educationCount}"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn remove-btn" onclick="this.parentNode.remove()">Remover</button>
+            `;
+            container.appendChild(newItem);
+            educationCount++;
+        }
+
+        function addExperience() {
+            const container = document.getElementById('experience-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-item';
+            newItem.innerHTML = `
+                <div class="dynamic-item-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="experience-position-${experienceCount}">Cargo*</label>
+                            <input type="text" id="experience-position-${experienceCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience-company-${experienceCount}">Empresa*</label>
+                            <input type="text" id="experience-company-${experienceCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience-start-${experienceCount}">Data de Início*</label>
+                            <input type="month" id="experience-start-${experienceCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience-end-${experienceCount}">Data de Término</label>
+                            <input type="month" id="experience-end-${experienceCount}">
+                            <small>Deixe em branco se for o emprego atual</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience-description-${experienceCount}">Descrição das Atividades*</label>
+                            <textarea id="experience-description-${experienceCount}" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn remove-btn" onclick="this.parentNode.remove()">Remover</button>
+            `;
+            container.appendChild(newItem);
+            experienceCount++;
+        }
+
+        function addLanguage() {
+            const container = document.getElementById('languages-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-item';
+            newItem.innerHTML = `
+                <div class="dynamic-item-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="language-name-${languageCount}">Idioma*</label>
+                            <input type="text" id="language-name-${languageCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="language-level-${languageCount}">Nível*</label>
+                            <select id="language-level-${languageCount}" required>
+                                <option value="">Selecione</option>
+                                <option value="Básico">Básico</option>
+                                <option value="Intermediário">Intermediário</option>
+                                <option value="Avançado">Avançado</option>
+                                <option value="Fluente">Fluente</option>
+                                <option value="Nativo">Nativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn remove-btn" onclick="this.parentNode.remove()">Remover</button>
+            `;
+            container.appendChild(newItem);
+            languageCount++;
+        }
+
+        function addProject() {
+            const container = document.getElementById('projects-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-item';
+            newItem.innerHTML = `
+                <div class="dynamic-item-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="project-name-${projectCount}">Nome do Projeto*</label>
+                            <input type="text" id="project-name-${projectCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-role-${projectCount}">Seu Papel no Projeto*</label>
+                            <input type="text" id="project-role-${projectCount}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-date-${projectCount}">Data do Projeto</label>
+                            <input type="month" id="project-date-${projectCount}">
+                        </div>
+                        <div class="form-group">
+                            <label for="project-description-${projectCount}">Descrição do Projeto*</label>
+                            <textarea id="project-description-${projectCount}" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-url-${projectCount}">URL (se aplicável)</label>
+                            <input type="url" id="project-url-${projectCount}">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn remove-btn" onclick="this.parentNode.remove()">Remover</button>
+            `;
+            container.appendChild(newItem);
+            projectCount++;
+        }
+
+        function addSkill() {
+            const skillInput = document.getElementById('skill-input');
+            const skill = skillInput.value.trim();
+            
+            if (skill && !skills.includes(skill)) {
+                skills.push(skill);
+                updateSkillsDisplay();
+                skillInput.value = '';
+            } else if (skills.includes(skill)) {
+                alert('Esta habilidade já foi adicionada');
+            }
+        }
+
+        function removeSkill(skill) {
+            skills = skills.filter(s => s !== skill);
+            updateSkillsDisplay();
+        }
+
+        function updateSkillsDisplay() {
+            const container = document.getElementById('skills-container');
+            container.innerHTML = '';
+            
+            skills.forEach(skill => {
+                const tag = document.createElement('div');
+                tag.className = 'skill-tag';
+                tag.innerHTML = `
+                    ${skill}
+                    <span class="remove-skill" onclick="removeSkill('${skill}')">×</span>
+                `;
+                container.appendChild(tag);
+            });
+        }
+
+        // Resume generation functions
+        function generateResume() {
+            // Validate last section before generating
+            if (!validateSection('section-projects')) {
+                return;
+            }
+            
+            // Personal Information
+            document.getElementById('resume-name').textContent = document.getElementById('full-name').value;
+            document.getElementById('resume-title').textContent = document.getElementById('profession').value;
+            document.getElementById('resume-email').textContent = document.getElementById('email').value;
+            document.getElementById('resume-phone').textContent = document.getElementById('phone').value;
+            document.getElementById('resume-address').textContent = document.getElementById('address').value;
+            document.getElementById('resume-linkedin').textContent = document.getElementById('linkedin').value ? `LinkedIn: ${document.getElementById('linkedin').value}` : '';
+            document.getElementById('resume-github').textContent = document.getElementById('github').value ? `GitHub: ${document.getElementById('github').value}` : '';
+            document.getElementById('resume-portfolio').textContent = document.getElementById('portfolio').value ? `Portfólio: ${document.getElementById('portfolio').value}` : '';
+            document.getElementById('resume-about').textContent = document.getElementById('about').value;
+            
+            // Education
+            const educationSection = document.getElementById('resume-education-section');
+            educationSection.innerHTML = '<h3 class="section-title-resume">Formação Acadêmica</h3>';
+            
+            const educationItems = document.querySelectorAll('#education-container .dynamic-item');
+            educationItems.forEach((item, index) => {
+                const degree = item.querySelector(`#education-degree-${index}`).value;
+                const field = item.querySelector(`#education-field-${index}`).value;
+                const institution = item.querySelector(`#education-institution-${index}`).value;
+                const start = item.querySelector(`#education-start-${index}`).value;
+                const end = item.querySelector(`#education-end-${index}`).value;
+                const description = item.querySelector(`#education-description-${index}`).value;
+                
+                const educationItem = document.createElement('div');
+                educationItem.className = 'resume-item';
+                educationItem.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-title">${degree} em ${field}</span>
+                        <span class="item-date">${start} - ${end}</span>
+                    </div>
+                    <div class="item-subtitle">${institution}</div>
+                    ${description ? `<p>${description}</p>` : ''}
+                `;
+                educationSection.appendChild(educationItem);
+            });
+            
+            // Experience
+            const experienceSection = document.getElementById('resume-experience-section');
+            experienceSection.innerHTML = '<h3 class="section-title-resume">Experiência Profissional</h3>';
+            
+            const experienceItems = document.querySelectorAll('#experience-container .dynamic-item');
+            experienceItems.forEach((item, index) => {
+                const position = item.querySelector(`#experience-position-${index}`).value;
+                const company = item.querySelector(`#experience-company-${index}`).value;
+                const start = formatDate(item.querySelector(`#experience-start-${index}`).value);
+                const end = item.querySelector(`#experience-end-${index}`).value ? formatDate(item.querySelector(`#experience-end-${index}`).value) : 'Presente';
+                const description = item.querySelector(`#experience-description-${index}`).value;
+                
+                const experienceItem = document.createElement('div');
+                experienceItem.className = 'resume-item';
+                experienceItem.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-title">${position}</span>
+                        <span class="item-date">${start} - ${end}</span>
+                    </div>
+                    <div class="item-subtitle">${company}</div>
+                    <p>${description}</p>
+                `;
+                experienceSection.appendChild(experienceItem);
+            });
+            
+            // Skills
+            const skillsSection = document.getElementById('resume-skills-list');
+            skillsSection.innerHTML = '';
+            
+            skills.forEach(skill => {
+                const skillItem = document.createElement('div');
+                skillItem.className = 'skill-item';
+                skillItem.textContent = skill;
+                skillsSection.appendChild(skillItem);
+            });
+            
+            // Languages
+            const languagesSection = document.getElementById('resume-languages-section');
+            languagesSection.innerHTML = '<h3 class="section-title-resume">Idiomas</h3>';
+            
+            const languageItems = document.querySelectorAll('#languages-container .dynamic-item');
+            languageItems.forEach((item, index) => {
+                const language = item.querySelector(`#language-name-${index}`).value;
+                const level = item.querySelector(`#language-level-${index}`).value;
+                
+                const languageItem = document.createElement('div');
+                languageItem.className = 'resume-item';
+                languageItem.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-title">${language}</span>
+                        <span class="item-date">${level}</span>
+                    </div>
+                `;
+                languagesSection.appendChild(languageItem);
+            });
+            
+            // Projects
+            const projectsSection = document.getElementById('resume-projects-section');
+            projectsSection.innerHTML = '<h3 class="section-title-resume">Projetos Relevantes</h3>';
+            
+            const projectItems = document.querySelectorAll('#projects-container .dynamic-item');
+            projectItems.forEach((item, index) => {
+                const name = item.querySelector(`#project-name-${index}`).value;
+                const role = item.querySelector(`#project-role-${index}`).value;
+                const date = item.querySelector(`#project-date-${index}`).value ? formatDate(item.querySelector(`#project-date-${index}`).value) : '';
+                const description = item.querySelector(`#project-description-${index}`).value;
+                const url = item.querySelector(`#project-url-${index}`).value;
+                
+                const projectItem = document.createElement('div');
+                projectItem.className = 'resume-item';
+                projectItem.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-title">${name}</span>
+                        ${date ? `<span class="item-date">${date}</span>` : ''}
+                    </div>
+                    <div class="item-subtitle">${role}</div>
+                    <p>${description}</p>
+                    ${url ? `<p><a href="${url}" target="_blank">Ver projeto</a></p>` : ''}
+                `;
+                projectsSection.appendChild(projectItem);
+            });
+            
+            // Show the resume preview
+            document.getElementById('resume-form').classList.add('hidden');
+            document.getElementById('resume-preview').style.display = 'block';
+        }
+
+        function backToForm() {
+            document.getElementById('resume-form').classList.remove('hidden');
+            document.getElementById('resume-preview').style.display = 'none';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            
+            const date = new Date(dateString);
+            const month = date.toLocaleString('default', { month: 'short' });
+            const year = date.getFullYear();
+            
+            return `${month} ${year}`;
+        }
+
+        // PDF Generation
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+            const resume = document.getElementById('resume-preview');
+            
+            // Hide buttons before capturing
+            const buttons = document.querySelectorAll('.no-print');
+            buttons.forEach(button => {
+                button.style.display = 'none';
+            });
+            
+            // Add a slight delay to ensure all elements are properly rendered
+            setTimeout(() => {
+                html2canvas(resume, {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = doc.internal.pageSize.getWidth() - 40;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    
+                    doc.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+                    
+                    // Restore buttons after capturing
+                    buttons.forEach(button => {
+                        button.style.display = '';
+                    });
+                    
+                    doc.save('curriculo.pdf');
+                });
+            }, 500);
         }
     </script>
 </body>
