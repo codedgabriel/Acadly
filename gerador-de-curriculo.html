@@ -387,6 +387,30 @@
             display: none;
         }
 
+        .optional-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .optional-section input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .optional-section label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .pdf-download-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -402,6 +426,11 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 5px;
+            }
+
+            .pdf-download-btn {
+                bottom: 10px;
+                right: 10px;
             }
         }
     </style>
@@ -476,6 +505,10 @@
             <!-- Formação Acadêmica -->
             <div class="form-section" id="section-education">
                 <h2 class="section-title">Formação Acadêmica</h2>
+                <div class="optional-section">
+                    <input type="checkbox" id="include-education" checked>
+                    <label for="include-education">Incluir seção de Formação Acadêmica</label>
+                </div>
                 <div id="education-container">
                     <div class="dynamic-item">
                         <div class="dynamic-item-content">
@@ -526,6 +559,10 @@
             <!-- Experiência Profissional -->
             <div class="form-section" id="section-experience">
                 <h2 class="section-title">Experiência Profissional</h2>
+                <div class="optional-section">
+                    <input type="checkbox" id="include-experience" checked>
+                    <label for="include-experience">Incluir seção de Experiência Profissional</label>
+                </div>
                 <div id="experience-container">
                     <div class="dynamic-item">
                         <div class="dynamic-item-content">
@@ -565,6 +602,10 @@
             <!-- Habilidades -->
             <div class="form-section" id="section-skills">
                 <h2 class="section-title">Habilidades</h2>
+                <div class="optional-section">
+                    <input type="checkbox" id="include-skills" checked>
+                    <label for="include-skills">Incluir seção de Habilidades</label>
+                </div>
                 <div class="form-group">
                     <label for="skill-input">Adicionar Habilidade</label>
                     <div style="display: flex; gap: 10px;">
@@ -587,6 +628,10 @@
             <!-- Idiomas -->
             <div class="form-section" id="section-languages">
                 <h2 class="section-title">Idiomas</h2>
+                <div class="optional-section">
+                    <input type="checkbox" id="include-languages" checked>
+                    <label for="include-languages">Incluir seção de Idiomas</label>
+                </div>
                 <div id="languages-container">
                     <div class="dynamic-item">
                         <div class="dynamic-item-content">
@@ -620,6 +665,10 @@
             <!-- Projetos -->
             <div class="form-section" id="section-projects">
                 <h2 class="section-title">Projetos Relevantes</h2>
+                <div class="optional-section">
+                    <input type="checkbox" id="include-projects" checked>
+                    <label for="include-projects">Incluir seção de Projetos</label>
+                </div>
                 <div id="projects-container">
                     <div class="dynamic-item">
                         <div class="dynamic-item-content">
@@ -684,29 +733,22 @@
             </div>
 
             <div class="resume-section" id="resume-education-section">
-                <h3 class="section-title-resume">Formação Acadêmica</h3>
                 <!-- Education items will be added here -->
             </div>
 
             <div class="resume-section" id="resume-experience-section">
-                <h3 class="section-title-resume">Experiência Profissional</h3>
                 <!-- Experience items will be added here -->
             </div>
 
             <div class="resume-section" id="resume-skills-section">
-                <h3 class="section-title-resume">Habilidades</h3>
-                <div class="skills-list" id="resume-skills-list">
-                    <!-- Skills will be added here -->
-                </div>
+                <!-- Skills will be added here -->
             </div>
 
             <div class="resume-section" id="resume-languages-section">
-                <h3 class="section-title-resume">Idiomas</h3>
                 <!-- Languages will be added here -->
             </div>
 
             <div class="resume-section" id="resume-projects-section">
-                <h3 class="section-title-resume">Projetos Relevantes</h3>
                 <!-- Projects will be added here -->
             </div>
 
@@ -716,6 +758,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Botão flutuante para download do PDF -->
+    <button id="pdf-download-btn" class="btn btn-danger pdf-download-btn" onclick="generatePDF()" style="display: none;">
+        Baixar PDF
+    </button>
 
     <script>
         // Wait for the DOM to be fully loaded
@@ -732,6 +779,14 @@
             
             // Set up image upload
             setupImageUpload();
+            
+            // Show/hide PDF download button when scrolling
+            window.addEventListener('scroll', function() {
+                const pdfBtn = document.getElementById('pdf-download-btn');
+                if (document.getElementById('resume-preview').style.display === 'block') {
+                    pdfBtn.style.display = 'block';
+                }
+            });
         });
 
         // Image upload functionality
@@ -777,6 +832,7 @@
                 document.getElementById(currentId).classList.remove('active');
                 document.getElementById(nextId).classList.add('active');
                 updateProgressBar();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -784,9 +840,16 @@
             document.getElementById(currentId).classList.remove('active');
             document.getElementById(prevId).classList.add('active');
             updateProgressBar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function validateSection(sectionId) {
+            // Skip validation if the section is optional and not included
+            const includeCheckbox = document.querySelector(`#${sectionId} .optional-section input[type="checkbox"]`);
+            if (includeCheckbox && !includeCheckbox.checked) {
+                return true;
+            }
+
             const section = document.getElementById(sectionId);
             const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
             let isValid = true;
@@ -1016,122 +1079,160 @@
             document.getElementById('resume-portfolio').textContent = document.getElementById('portfolio').value ? `Portfólio: ${document.getElementById('portfolio').value}` : '';
             document.getElementById('resume-about').textContent = document.getElementById('about').value;
             
-            // Education
+            // Education - only if included
             const educationSection = document.getElementById('resume-education-section');
-            educationSection.innerHTML = '<h3 class="section-title-resume">Formação Acadêmica</h3>';
+            educationSection.innerHTML = '';
             
-            const educationItems = document.querySelectorAll('#education-container .dynamic-item');
-            educationItems.forEach((item, index) => {
-                const degree = item.querySelector(`#education-degree-${index}`).value;
-                const field = item.querySelector(`#education-field-${index}`).value;
-                const institution = item.querySelector(`#education-institution-${index}`).value;
-                const start = item.querySelector(`#education-start-${index}`).value;
-                const end = item.querySelector(`#education-end-${index}`).value;
-                const description = item.querySelector(`#education-description-${index}`).value;
-                
-                const educationItem = document.createElement('div');
-                educationItem.className = 'resume-item';
-                educationItem.innerHTML = `
-                    <div class="item-header">
-                        <span class="item-title">${degree} em ${field}</span>
-                        <span class="item-date">${start} - ${end}</span>
-                    </div>
-                    <div class="item-subtitle">${institution}</div>
-                    ${description ? `<p>${description}</p>` : ''}
-                `;
-                educationSection.appendChild(educationItem);
-            });
+            if (document.getElementById('include-education').checked) {
+                const educationItems = document.querySelectorAll('#education-container .dynamic-item');
+                if (educationItems.length > 0) {
+                    educationSection.innerHTML = '<h3 class="section-title-resume">Formação Acadêmica</h3>';
+                    
+                    educationItems.forEach((item, index) => {
+                        const degree = item.querySelector(`#education-degree-${index}`).value;
+                        const field = item.querySelector(`#education-field-${index}`).value;
+                        const institution = item.querySelector(`#education-institution-${index}`).value;
+                        const start = item.querySelector(`#education-start-${index}`).value;
+                        const end = item.querySelector(`#education-end-${index}`).value;
+                        const description = item.querySelector(`#education-description-${index}`).value;
+                        
+                        const educationItem = document.createElement('div');
+                        educationItem.className = 'resume-item';
+                        educationItem.innerHTML = `
+                            <div class="item-header">
+                                <span class="item-title">${degree} em ${field}</span>
+                                <span class="item-date">${start} - ${end}</span>
+                            </div>
+                            <div class="item-subtitle">${institution}</div>
+                            ${description ? `<p>${description}</p>` : ''}
+                        `;
+                        educationSection.appendChild(educationItem);
+                    });
+                }
+            }
             
-            // Experience
+            // Experience - only if included
             const experienceSection = document.getElementById('resume-experience-section');
-            experienceSection.innerHTML = '<h3 class="section-title-resume">Experiência Profissional</h3>';
+            experienceSection.innerHTML = '';
             
-            const experienceItems = document.querySelectorAll('#experience-container .dynamic-item');
-            experienceItems.forEach((item, index) => {
-                const position = item.querySelector(`#experience-position-${index}`).value;
-                const company = item.querySelector(`#experience-company-${index}`).value;
-                const start = formatDate(item.querySelector(`#experience-start-${index}`).value);
-                const end = item.querySelector(`#experience-end-${index}`).value ? formatDate(item.querySelector(`#experience-end-${index}`).value) : 'Presente';
-                const description = item.querySelector(`#experience-description-${index}`).value;
-                
-                const experienceItem = document.createElement('div');
-                experienceItem.className = 'resume-item';
-                experienceItem.innerHTML = `
-                    <div class="item-header">
-                        <span class="item-title">${position}</span>
-                        <span class="item-date">${start} - ${end}</span>
-                    </div>
-                    <div class="item-subtitle">${company}</div>
-                    <p>${description}</p>
-                `;
-                experienceSection.appendChild(experienceItem);
-            });
+            if (document.getElementById('include-experience').checked) {
+                const experienceItems = document.querySelectorAll('#experience-container .dynamic-item');
+                if (experienceItems.length > 0) {
+                    experienceSection.innerHTML = '<h3 class="section-title-resume">Experiência Profissional</h3>';
+                    
+                    experienceItems.forEach((item, index) => {
+                        const position = item.querySelector(`#experience-position-${index}`).value;
+                        const company = item.querySelector(`#experience-company-${index}`).value;
+                        const start = formatDate(item.querySelector(`#experience-start-${index}`).value);
+                        const end = item.querySelector(`#experience-end-${index}`).value ? formatDate(item.querySelector(`#experience-end-${index}`).value) : 'Presente';
+                        const description = item.querySelector(`#experience-description-${index}`).value;
+                        
+                        const experienceItem = document.createElement('div');
+                        experienceItem.className = 'resume-item';
+                        experienceItem.innerHTML = `
+                            <div class="item-header">
+                                <span class="item-title">${position}</span>
+                                <span class="item-date">${start} - ${end}</span>
+                            </div>
+                            <div class="item-subtitle">${company}</div>
+                            <p>${description}</p>
+                        `;
+                        experienceSection.appendChild(experienceItem);
+                    });
+                }
+            }
             
-            // Skills
-            const skillsSection = document.getElementById('resume-skills-list');
+            // Skills - only if included
+            const skillsSection = document.getElementById('resume-skills-section');
             skillsSection.innerHTML = '';
             
-            skills.forEach(skill => {
-                const skillItem = document.createElement('div');
-                skillItem.className = 'skill-item';
-                skillItem.textContent = skill;
-                skillsSection.appendChild(skillItem);
-            });
+            if (document.getElementById('include-skills').checked && skills.length > 0) {
+                skillsSection.innerHTML = '<h3 class="section-title-resume">Habilidades</h3>';
+                const skillsList = document.createElement('div');
+                skillsList.className = 'skills-list';
+                skillsList.id = 'resume-skills-list';
+                
+                skills.forEach(skill => {
+                    const skillItem = document.createElement('div');
+                    skillItem.className = 'skill-item';
+                    skillItem.textContent = skill;
+                    skillsList.appendChild(skillItem);
+                });
+                
+                skillsSection.appendChild(skillsList);
+            }
             
-            // Languages
+            // Languages - only if included
             const languagesSection = document.getElementById('resume-languages-section');
-            languagesSection.innerHTML = '<h3 class="section-title-resume">Idiomas</h3>';
+            languagesSection.innerHTML = '';
             
-            const languageItems = document.querySelectorAll('#languages-container .dynamic-item');
-            languageItems.forEach((item, index) => {
-                const language = item.querySelector(`#language-name-${index}`).value;
-                const level = item.querySelector(`#language-level-${index}`).value;
-                
-                const languageItem = document.createElement('div');
-                languageItem.className = 'resume-item';
-                languageItem.innerHTML = `
-                    <div class="item-header">
-                        <span class="item-title">${language}</span>
-                        <span class="item-date">${level}</span>
-                    </div>
-                `;
-                languagesSection.appendChild(languageItem);
-            });
+            if (document.getElementById('include-languages').checked) {
+                const languageItems = document.querySelectorAll('#languages-container .dynamic-item');
+                if (languageItems.length > 0) {
+                    languagesSection.innerHTML = '<h3 class="section-title-resume">Idiomas</h3>';
+                    
+                    languageItems.forEach((item, index) => {
+                        const language = item.querySelector(`#language-name-${index}`).value;
+                        const level = item.querySelector(`#language-level-${index}`).value;
+                        
+                        const languageItem = document.createElement('div');
+                        languageItem.className = 'resume-item';
+                        languageItem.innerHTML = `
+                            <div class="item-header">
+                                <span class="item-title">${language}</span>
+                                <span class="item-date">${level}</span>
+                            </div>
+                        `;
+                        languagesSection.appendChild(languageItem);
+                    });
+                }
+            }
             
-            // Projects
+            // Projects - only if included
             const projectsSection = document.getElementById('resume-projects-section');
-            projectsSection.innerHTML = '<h3 class="section-title-resume">Projetos Relevantes</h3>';
+            projectsSection.innerHTML = '';
             
-            const projectItems = document.querySelectorAll('#projects-container .dynamic-item');
-            projectItems.forEach((item, index) => {
-                const name = item.querySelector(`#project-name-${index}`).value;
-                const role = item.querySelector(`#project-role-${index}`).value;
-                const date = item.querySelector(`#project-date-${index}`).value ? formatDate(item.querySelector(`#project-date-${index}`).value) : '';
-                const description = item.querySelector(`#project-description-${index}`).value;
-                const url = item.querySelector(`#project-url-${index}`).value;
-                
-                const projectItem = document.createElement('div');
-                projectItem.className = 'resume-item';
-                projectItem.innerHTML = `
-                    <div class="item-header">
-                        <span class="item-title">${name}</span>
-                        ${date ? `<span class="item-date">${date}</span>` : ''}
-                    </div>
-                    <div class="item-subtitle">${role}</div>
-                    <p>${description}</p>
-                    ${url ? `<p><a href="${url}" target="_blank">Ver projeto</a></p>` : ''}
-                `;
-                projectsSection.appendChild(projectItem);
-            });
+            if (document.getElementById('include-projects').checked) {
+                const projectItems = document.querySelectorAll('#projects-container .dynamic-item');
+                if (projectItems.length > 0) {
+                    projectsSection.innerHTML = '<h3 class="section-title-resume">Projetos Relevantes</h3>';
+                    
+                    projectItems.forEach((item, index) => {
+                        const name = item.querySelector(`#project-name-${index}`).value;
+                        const role = item.querySelector(`#project-role-${index}`).value;
+                        const date = item.querySelector(`#project-date-${index}`).value ? formatDate(item.querySelector(`#project-date-${index}`).value) : '';
+                        const description = item.querySelector(`#project-description-${index}`).value;
+                        const url = item.querySelector(`#project-url-${index}`).value;
+                        
+                        const projectItem = document.createElement('div');
+                        projectItem.className = 'resume-item';
+                        projectItem.innerHTML = `
+                            <div class="item-header">
+                                <span class="item-title">${name}</span>
+                                ${date ? `<span class="item-date">${date}</span>` : ''}
+                            </div>
+                            <div class="item-subtitle">${role}</div>
+                            <p>${description}</p>
+                            ${url ? `<p><a href="${url}" target="_blank">Ver projeto</a></p>` : ''}
+                        `;
+                        projectsSection.appendChild(projectItem);
+                    });
+                }
+            }
             
             // Show the resume preview
             document.getElementById('resume-form').classList.add('hidden');
             document.getElementById('resume-preview').style.display = 'block';
+            document.getElementById('pdf-download-btn').style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function backToForm() {
             document.getElementById('resume-form').classList.remove('hidden');
             document.getElementById('resume-preview').style.display = 'none';
+            document.getElementById('pdf-download-btn').style.display = 'none';
         }
 
         function formatDate(dateString) {
@@ -1152,9 +1253,12 @@
             
             // Hide buttons before capturing
             const buttons = document.querySelectorAll('.no-print');
+            const pdfBtn = document.getElementById('pdf-download-btn');
+            
             buttons.forEach(button => {
                 button.style.display = 'none';
             });
+            pdfBtn.style.display = 'none';
             
             // Add a slight delay to ensure all elements are properly rendered
             setTimeout(() => {
@@ -1173,8 +1277,13 @@
                     buttons.forEach(button => {
                         button.style.display = '';
                     });
+                    pdfBtn.style.display = 'block';
                     
-                    doc.save('curriculo.pdf');
+                    // Generate filename with user's name
+                    const userName = document.getElementById('full-name').value.trim() || 'curriculo';
+                    const fileName = userName.toLowerCase().replace(/\s+/g, '-') + '.pdf';
+                    
+                    doc.save(fileName);
                 });
             }, 500);
         }
