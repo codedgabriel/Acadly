@@ -16,8 +16,9 @@
 
 ## ⚙️ Funcionalidades
 
-- 📝 **Gerador de Trabalhos Acadêmicos** com normas da ABNT
+- 📝 **Gerador de Trabalhos Acadêmicos** com normas da ABNT (PDF automatizado a partir dos inputs)
 - 📄 **Gerador de Currículo Profissional**
+- 🧠 **Gerador de Trabalhos Escolar** a partir de tema e campos simples, com saída em PDF formatado
 - 🌗 Alternância de **tema claro/escuro**
 - 🪄 Efeitos visuais modernos e **tela de carregamento**
 - 🔔 Sistema de notificações suave e discreto
@@ -39,8 +40,9 @@
 acadly/
 ├── index.html         # Página principal
 ├── /tools             # Ferramentas separadas
-│   ├── gerador-de-trabalho.html
-│   └── gerador-de-curriculo.html
+│   ├── gerador-de-trabalho-academico.html
+│   ├── gerador-de-curriculo.html
+│   └── gerador-trabalho-escolar.html
 ├── assets/            # Ícones, imagens, fontes (se necessário)
 └── README.md          # Este arquivo
 ```
@@ -71,7 +73,7 @@ start index.html
 
 ## 📢 Contato
 
-Feito com 💙 por [@codedgabriel](https://github.com/codedgabriel)  
+Feito por [@codedgabriel](https://github.com/codedgabriel)  
 Contribua com ⭐ no repositório se este projeto te ajudou!
 
 ---
