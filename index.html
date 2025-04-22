@@ -577,7 +577,18 @@
 
         <div class="tools-container">
 
-            <div class="tool-card" onclick="openTool('gerador-trabalhos')">
+            <div class="tool-card" onclick="openTool('gerador-trabalho-escolar')">
+                <div class="tool-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Gerador de Trabalhos Escolar</h3>
+                <p></p>
+                <button class="tool-btn" aria-label="Acessar Gerador de Trabalhos Acadêmicos">
+                    Acessar <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="tool-card" onclick="openTool('gerador-trabalho-academico')">
                 <div class="tool-icon">
                     <i class="fas fa-file-alt"></i>
                 </div>
@@ -598,6 +609,7 @@
                     Acessar <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
+            
 
 
         </div>
@@ -669,14 +681,19 @@
                 document.getElementById('githubModal').classList.add('active');
             } else {
                 const toolNames = {
-                    'gerador-trabalhos': 'Gerador de Trabalhos Acadêmicos',
+                    'gerador-trabalho-escolar': 'Gerador de Trabalhos Escolar',
+                    'gerador-trabalho-academico': 'Gerador de Trabalhos Acadêmicos',
                     'gerador-curriculo': 'Gerador de Currículo'
                 };
 
                 showNotification(`Abrindo: ${toolNames[tool]}`);
 
-                if(tool === 'gerador-trabalhos') {
-                    window.open('tools/gerador-de-trabalho.html', '_blank');
+                if(tool === 'gerador-trabalho-escolar') {
+                    window.open('tools/gerador-de-trabalho-escolar.html', '_blank');
+                }
+
+                if(tool === 'gerador-trabalho-academico') {
+                    window.open('tools/gerador-de-trabalho-academico.html', '_blank');
                 }
 
                 if(tool === 'gerador-curriculo') {
