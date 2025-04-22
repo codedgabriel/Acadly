@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acadly - Revolucionando sua Vida Acadêmica</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #2563eb;
@@ -476,8 +478,13 @@
         }
 
         @keyframes loading {
-            0% { width: 0; }
-            100% { width: 100%; }
+            0% {
+                width: 0;
+            }
+
+            100% {
+                width: 100%;
+            }
         }
 
         /* Responsividade */
@@ -485,34 +492,34 @@
             header {
                 padding: 14px 20px;
             }
-            
+
             .logo {
                 font-size: 20px;
             }
-            
+
             .logo i {
                 font-size: 22px;
             }
-            
+
             .github-btn span {
                 display: none;
             }
-            
+
             .github-btn {
                 padding: 8px;
             }
-            
+
             .tools-container {
                 grid-template-columns: 1fr 1fr;
                 gap: 14px;
                 padding: 8px;
             }
-            
+
             .tool-card {
                 padding: 20px;
                 min-height: 200px;
             }
-            
+
             .hero h1 {
                 font-size: 1.8rem;
             }
@@ -522,17 +529,18 @@
             .tools-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .hero h1 {
                 font-size: 1.6rem;
             }
-            
+
             .hero p {
                 font-size: 0.95rem;
             }
         }
     </style>
 </head>
+
 <body class="dark-mode">
     <div class="gradient-bg"></div>
 
@@ -546,13 +554,13 @@
             <div class="loading-progress"></div>
         </div>
     </div>
-    
+
     <header>
         <a href="#" class="logo">
             <i class="fas fa-graduation-cap"></i>
             <span>Acadly</span>
         </a>
-        
+
         <div class="header-controls">
             <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema"></button>
             <a href="https://github.com/codedgabriel/acadly" target="_blank" class="github-btn">
@@ -568,33 +576,52 @@
         </div>
 
         <div class="tools-container">
+
             <div class="tool-card" onclick="openTool('gerador-trabalhos')">
                 <div class="tool-icon">
                     <i class="fas fa-file-alt"></i>
                 </div>
                 <h3>Gerador de Trabalhos Acadêmicos</h3>
-                <p>Estruturas completas seguindo normas ABNT</p>
-                <button class="tool-btn">Acessar <i class="fas fa-arrow-right"></i></button>
+                <p>Crie trabalhos completos seguindo as normas da ABNT.</p>
+                <button class="tool-btn" aria-label="Acessar Gerador de Trabalhos Acadêmicos">
+                    Acessar <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
+
+            <div class="tool-card" onclick="openTool('gerador-curriculo')">
+                <div class="tool-icon">
+                    <i class="fas fa-id-card-alt"></i>
+                </div>
+                <h3>Gerador de Currículo</h3>
+                <p>Monte um currículo profissional em poucos minutos.</p>
+                <button class="tool-btn" aria-label="Acessar Gerador de Currículo">
+                    Acessar <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+
         </div>
     </main>
 
     <footer>
-        <a href="https://github.com/codedgabriel" target="_blank">codegabriel © 2025 acadly.com.br - Projeto open-source</a>
+        <a href="https://github.com/codedgabriel" target="_blank">codegabriel © 2025 acadly.com.br - Projeto
+            open-source</a>
     </footer>
 
     <div class="modal" id="githubModal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal()">&times;</button>
             <h2>Contribua com o Acadly</h2>
-            <p>Este projeto é desenvolvido por codegabriel e sua contribuição é valiosa para revolucionar a educação!</p>
+            <p>Este projeto é desenvolvido por codegabriel e sua contribuição é valiosa para revolucionar a educação!
+            </p>
             <ul>
                 <li>Dê uma estrela no GitHub para nos apoiar</li>
                 <li>Reporte bugs ou problemas que encontrar</li>
                 <li>Sugira novas funcionalidades inovadoras</li>
                 <li>Contribua com código e melhore a plataforma</li>
             </ul>
-            <a href="https://github.com/codedgabriel/acadly" target="_blank" class="tool-btn" style="text-decoration: none; display: inline-block;">
+            <a href="https://github.com/codedgabriel/acadly" target="_blank" class="tool-btn"
+                style="text-decoration: none; display: inline-block;">
                 <i class="fab fa-github"></i> Acessar Repositório
             </a>
         </div>
@@ -609,18 +636,18 @@
         // Toggle de tema simplificado
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
-        
+
         // Verificar preferência do usuário
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const savedTheme = localStorage.getItem('theme');
-        
+
         // Aplicar tema salvo ou preferência do sistema
         if (savedTheme) {
             body.classList.add(savedTheme);
         } else {
             body.classList.add(prefersDark ? 'dark-mode' : 'light-mode');
         }
-        
+
         // Alternar tema
         themeToggle.addEventListener('click', () => {
             if (body.classList.contains('light-mode')) {
@@ -635,17 +662,26 @@
                 showNotification('Modo claro ativado');
             }
         });
-        
+
         // Abrir ferramenta
         function openTool(tool) {
             if (tool === 'github') {
                 document.getElementById('githubModal').classList.add('active');
             } else {
                 const toolNames = {
-                    'gerador-trabalhos': 'Gerador de Trabalhos Acadêmicos'
+                    'gerador-trabalhos': 'Gerador de Trabalhos Acadêmicos',
+                    'gerador-curriculo': 'Gerador de Currículo'
                 };
-                
+
                 showNotification(`Abrindo: ${toolNames[tool]}`);
+
+                if(tool === 'gerador-trabalhos') {
+                    window.open('tools/gerador-de-trabalho.html', '_blank');
+                }
+
+                if(tool === 'gerador-curriculo') {
+                    window.open('tools/gerador-de-curriculo.html', '_blank');
+                }
             }
         }
 
@@ -668,11 +704,11 @@
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             const notificationText = document.getElementById('notificationText');
-            
+
             notificationText.textContent = message;
             notification.className = `notification ${type}`;
             notification.classList.add('show');
-            
+
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
@@ -684,7 +720,7 @@
                 const loadingScreen = document.getElementById('loadingScreen');
                 loadingScreen.style.opacity = '0';
                 loadingScreen.style.visibility = 'hidden';
-                
+
                 // Mostrar notificação de boas-vindas
                 setTimeout(() => {
                     showNotification('Bem-vindo ao Acadly! bom proveito as ferramentas.');
@@ -693,4 +729,5 @@
         });
     </script>
 </body>
+
 </html>
