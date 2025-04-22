@@ -28,7 +28,7 @@
 ## 🖼️ Preview
 
 <p align="center">
-  <img src="https://github.com/codedgabriel/acadly/assets/preview.png" alt="Demonstração do Acadly" width="700"/>
+  <img src="assets/preview.png" alt="Demonstração do Acadly" width="700"/>
 </p>
 
 ---
