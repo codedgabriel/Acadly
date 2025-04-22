@@ -1,22 +1,79 @@
-# <span style="color: #2c3e50; font-family: 'Arial', sans-serif;">📚 Gerador ABNT Online</span>
 
-<div style="text-align: center; margin: 20px 0;">
-<img src="https://via.placeholder.com/800x450?text=Preview+Gerador+ABNT" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 100%; border: 1px solid #eee;">
-</div>
+# 🎓 Acadly
 
-<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4CAF50;">
-<p style="font-size: 18px; margin: 0;">Gerador completo de trabalhos acadêmicos que formata automaticamente no padrão ABNT com:</p>
-<ul style="margin: 10px 0 0 20px;">
-<li>✅ Capa e folha de rosto automáticas</li>
-<li>✅ Sumário com numeração de páginas</li>
-<li>✅ Seções dinâmicas e elementos ricos</li>
-<li>✅ Exportação para PDF pronta para impressão</li>
-</ul>
-</div>
+> Revolucionando sua vida acadêmica com ferramentas inteligentes e um design moderno.
 
-## <span style="color: #34495e;">☕ Me pague um café</span>
+![Acadly Banner](https://img.shields.io/badge/Acadly-Open%20Source-blue?style=for-the-badge&logo=github)
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow?style=for-the-badge)
 
-<div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center; margin-top: 30px; border: 1px dashed #ffb74d;">
-<p style="margin: 0;">Se este projeto te ajudou, considere me pagar um café para me manter motivado!</p>
-<a href="https://www.buymeacoffee.com/seuusuario" target="_blank" style="display: inline-block; background: #ff9800; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; margin-top: 10px; font-weight: bold;">☕ Café via Buy Me a Coffee</a>
-</div>
+---
+
+## 🌐 Visão Geral
+
+**Acadly** é uma plataforma que centraliza ferramentas úteis para estudantes, com foco em produtividade acadêmica, currículo e organização. Com uma interface elegante, responsiva e suporte a tema escuro/claro, a aplicação busca ser prática e intuitiva desde o primeiro clique.
+
+---
+
+## ⚙️ Funcionalidades
+
+- 📝 **Gerador de Trabalhos Acadêmicos** com normas da ABNT
+- 📄 **Gerador de Currículo Profissional**
+- 🌗 Alternância de **tema claro/escuro**
+- 🪄 Efeitos visuais modernos e **tela de carregamento**
+- 🔔 Sistema de notificações suave e discreto
+- 💬 Modal de contribuição com incentivo open-source
+
+---
+
+## 🖼️ Preview
+
+<p align="center">
+  <img src="https://github.com/codedgabriel/acadly/assets/preview.gif" alt="Demonstração do Acadly" width="700"/>
+</p>
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+acadly/
+├── index.html         # Página principal
+├── /tools             # Ferramentas separadas
+│   ├── gerador-de-trabalho.html
+│   └── gerador-de-curriculo.html
+├── assets/            # Ícones, imagens, fontes (se necessário)
+└── README.md          # Este arquivo
+```
+
+---
+
+## 🚀 Como Rodar Localmente
+
+```bash
+git clone https://github.com/codedgabriel/acadly.git
+cd acadly
+start index.html
+```
+
+> Certifique-se de ter uma conexão com a internet ativa para carregar os ícones e fontes via CDN.
+
+---
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch (`git checkout -b minha-feature`)
+3. Faça commit das suas alterações (`git commit -m 'feat: nova feature'`)
+4. Envie para a branch principal (`git push origin minha-feature`)
+5. Abra um **Pull Request**
+
+---
+
+## 📢 Contato
+
+Feito com 💙 por [@codedgabriel](https://github.com/codedgabriel)  
+Contribua com ⭐ no repositório se este projeto te ajudou!
+
+---
+
+> “A educação é a arma mais poderosa que você pode usar para mudar o mundo.” — *Nelson Mandela*
