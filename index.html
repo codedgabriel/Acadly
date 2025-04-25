@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+
+
     <style>
         :root {
             --primary: #2563eb;
@@ -542,6 +544,8 @@
 </head>
 
 <body class="dark-mode">
+
+
     <div class="gradient-bg"></div>
 
     <!-- Loading Screen -->
@@ -563,6 +567,12 @@
 
         <div class="header-controls">
             <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema"></button>
+
+            <a href="https://instagram.com/codegabriel" target="_blank" class="github-btn">
+                <i class="fab fa-instagram"></i>
+                <span>codegabriel</span>
+            </a>
+
             <a href="https://github.com/codedgabriel/acadly" target="_blank" class="github-btn">
                 <i class="fab fa-github"></i>
                 <span>Apoie</span>
@@ -586,7 +596,7 @@
                 <button class="tool-btn" aria-label="Acessar Gerador de Trabalhos Acadêmicos">
                     Acessar <i class="fas fa-arrow-right"></i>
                 </button>
-            </div>            
+            </div>
 
             <div class="tool-card" onclick="openTool('gerador-trabalho-academico')">
                 <div class="tool-icon">
@@ -609,7 +619,7 @@
                     Acessar <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
-            
+
 
 
         </div>
@@ -688,15 +698,15 @@
 
                 showNotification(`Abrindo: ${toolNames[tool]}`);
 
-                if(tool === 'gerador-trabalho-escolar') {
+                if (tool === 'gerador-trabalho-escolar') {
                     window.open('tools/gerador-de-trabalho-escolar.html', '_blank');
                 }
 
-                if(tool === 'gerador-trabalho-academico') {
+                if (tool === 'gerador-trabalho-academico') {
                     window.open('tools/gerador-de-trabalho-academico.html', '_blank');
                 }
 
-                if(tool === 'gerador-curriculo') {
+                if (tool === 'gerador-curriculo') {
                     window.open('tools/gerador-de-curriculo.html', '_blank');
                 }
             }
